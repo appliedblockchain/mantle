@@ -31,7 +31,7 @@ Mantle.configure = {
   contracts: {
     DecentralizedTwitter: {
       // use truffle / cobalt / similar api
-      abi: "",
+      abi: "", // jsonInterface
       address: "",
       // ....
     },
