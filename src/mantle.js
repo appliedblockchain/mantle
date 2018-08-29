@@ -1,8 +1,6 @@
-require('babel-register')
-
-import BPrivacy from '@appliedblockchain/b-privacy'
-import crypto from 'crypto'
-import Web3 from 'web3'
+const BPrivacy = require('@appliedblockchain/b-privacy')
+const crypto = require('crypto')
+const Web3 = require('web3')
 
 class Mantle {
   constructor(config = {}) {
@@ -11,6 +9,7 @@ class Mantle {
     }
 
     this.config = config
+    this.setupWeb3Provider()
   }
 
   get Web3() {
@@ -21,13 +20,19 @@ class Mantle {
     return Web3
   }
 
-  connect() {
-    const { port = 8080 } = this.config
-    // TODO: Support other providers
-    const provider = 'HttpProvider'
+  async connect() {
+    try {
+      const blockNum = await this.web3.eth.getBlockNumber()
+      return blockNum
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
 
-    // TODO: Set up Ganache for local testing
-    const web3 = new Web3(Web3.providers[provider](`http://localhost:${port}`))
+  setupWeb3Provider() {
+    const { port = 8545 } = this.config
+    const defaultProviderUrl = `http://localhost:${port}`
+    const web3 = new Web3(defaultProviderUrl)
     this.web3 = web3
   }
 
@@ -45,7 +50,7 @@ class Mantle {
   encrypt(data, publicKey) {
     try {
       // Generate private key
-      const privateKey = this.web3.eth.accounts.create().privateKey
+      const privateKey = this.web3.eth.accounts.create().privateKey.toString()
       return BPrivacy.encrypt(data, privateKey, publicKey)
     } catch (err) {
       throw new Error(err)
@@ -93,4 +98,4 @@ class Mantle {
   }
 }
 
-export default Mantle
+module.exports = Mantle
