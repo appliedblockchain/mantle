@@ -3,15 +3,17 @@ const crypto = require('crypto')
 const Web3 = require('web3')
 const Mnemonic = require('bitcore-mnemonic')
 const secp256k1 = require('secp256k1')
+const Config = require('./config')
 
 class Mantle {
-  constructor(config = {}) {
-    if (!config) {
-      throw new Error('No configuration provided: cannot initialize Mantle')
+  constructor(config) {
+    try {
+      this.config = new Config(config)
+    } catch (err) {
+      throw err
     }
 
     this.keysLoaded = false
-    this.config = config
 
     this.setupWeb3Provider()
   }
