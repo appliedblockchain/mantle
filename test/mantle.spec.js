@@ -1,6 +1,7 @@
 const Mantle = require('../src/mantle')
 const secp256k1 = require('secp256k1')
-const { exec } = require('child_process')
+const Ganache = require('ganache-core')
+const ganache = Ganache.server()
 
 describe('Mantle', () => {
   test('throws an error if no configuration is provided', () => {
@@ -18,18 +19,13 @@ describe('Mantle', () => {
       expect(mantle.web3).toBeTruthy()
     })
 
-    test('connects to a block', () => {
-      /* TODO: Promisify exec (it currently seems to conflict with Jest). Also
-       * consider opening a ganache connection in a beforeAll block and killing
-       * on tests where we need an inactive connection */
-      const ganache = exec('npx ganache-cli', async () => {
+    test('connects to a block', async () => {
+      await ganache.listen(8545, async () => {
         const mantle = new Mantle()
         const blockNum = await mantle.connect()
         expect(typeof blockNum === 'number').toBeTruthy()
       })
-
-      // Kill the ganache connection after test completion to avoid hung processes
-      ganache.kill()
+      ganache.close()
     })
 
     test('throws an error on unsuccessful connection to a block', async () => {
