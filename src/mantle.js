@@ -8,8 +8,11 @@ class Mantle {
       throw new Error('No configuration provided: cannot initialize Mantle')
     }
 
+    this.keysGenerated = false
     this.config = config
+
     this.setupWeb3Provider()
+    this.generateKeys()
   }
 
   get Web3() {
@@ -95,6 +98,27 @@ class Mantle {
     } catch (err) {
       throw new Error(err)
     }
+  }
+
+  /**
+   * Initialize an instance of BPrivacy in order to generate public, private and mnemonic keys
+   * @param  {*} [data] A seed, phrase, or entropy to initialize a mnemonic (optional)
+   * @return {void}
+   */
+  generateKeys(data) {
+    if (this.keysGenerated) {
+      throw new Error('Keys have already been generated')
+    }
+
+    const bPrivacy = new BPrivacy(data)
+    const { mnemonic, mnemonicKey, pubKey, pvtKey } = bPrivacy
+
+    this.mnemonic = mnemonic
+    this.mnemonicKey = mnemonicKey
+    this.privateKey = pvtKey
+    this.publicKey = pubKey
+
+    this.keysGenerated = true
   }
 }
 

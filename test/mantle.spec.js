@@ -12,6 +12,27 @@ describe('Mantle', () => {
     }).toThrow(error)
   })
 
+  test('generates a mnemonic, mnemonicKey and private/public key pair upon initialization', () => {
+    const mantle = new Mantle()
+    const { mnemonic, mnemonicKey, publicKey, privateKey } = mantle
+
+    expect(mnemonic).toBeTruthy()
+    expect(mnemonicKey).toBeTruthy()
+    expect(privateKey).toBeTruthy()
+    expect(publicKey).toBeTruthy()
+
+    expect(mnemonic.split(' ').length).toEqual(12)
+    expect(Buffer.isBuffer(privateKey)).toBe(true)
+    expect(Buffer.isBuffer(publicKey)).toBe(true)
+  })
+
+  test('throws an error if attempting to generate another set of keys', () => {
+    const mantle = new Mantle()
+    expect(() => {
+      mantle.generateKeys()
+    }).toThrow('Keys have already been generated')
+  })
+
   describe('Web3 integration', () => {
     const WEB3_VER = '1.0.0-beta.33'
 
