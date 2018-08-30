@@ -1,6 +1,8 @@
 const BPrivacy = require('@appliedblockchain/b-privacy')
 const crypto = require('crypto')
 const Web3 = require('web3')
+const Mnemonic = require('bitcore-mnemonic')
+const secp256k1 = require('secp256k1')
 
 class Mantle {
   constructor(config = {}) {
@@ -8,11 +10,10 @@ class Mantle {
       throw new Error('No configuration provided: cannot initialize Mantle')
     }
 
-    this.keysGenerated = false
+    this.keysLoaded = false
     this.config = config
 
     this.setupWeb3Provider()
-    this.generateKeys()
   }
 
   get Web3() {
@@ -101,30 +102,73 @@ class Mantle {
   }
 
   /**
-   * Initialize an instance of BPrivacy in order to generate public, private and mnemonic keys
-   * @param  {*} [data] A seed, phrase, or entropy to initialize a mnemonic (optional)
+   * Derive a mnemonic/HD private key from the supplied seed (if applicable). If no
+   * seed is provided, then create a new mnemonic (this is exposed as mantle.mnemonic).
+   * The HD private key can be used to derive a HD public key and, later, private/public key pairs
+   * @param  {string} [seed=null] A 12 word mnemonic that acts as a seed in order to recover account information (optional)
    * @return {void}
    */
-  generateKeys(data) {
-    if (this.keysGenerated) {
-      throw new Error('Keys have already been generated')
+  loadMnemonic(seed = null) {
+    if (this.keysLoaded) {
+      throw new Error('Cannot load mnemonic: a mnemonic has already been loaded')
     }
 
-    const bPrivacy = new BPrivacy(data)
-    const { mnemonic, pubKey, pvtKey } = bPrivacy
+    const code = new Mnemonic(seed, Mnemonic.Words.ENGLISH)
+    const hdPrivateKey = code.toHDPrivateKey()
+    const hdPublicKey = hdPrivateKey.hdPublicKey
 
-    this.mnemonic = mnemonic
-    this.privateKey = pvtKey
-    this.publicKey = pubKey
+    this.mnemonic = code.phrase
+    this.hdPrivateKey = hdPrivateKey
+    this.hdPublicKey = hdPublicKey
+    this.privateKey = this.derivePrivateKey()
+    this.publicKey = this.derivePublicKey()
 
-    this.keysGenerated = true
+    this.keysLoaded = true
+  }
+
+  /**
+   * Derive a private key from our HDPrivateKey
+   * @param  {number} index=0
+   * @return {buffer}
+   */
+  derivePrivateKey(index = 0) {
+    if (!this.hdPrivateKey) {
+      throw new Error('Cannot derive a private key: no HD private key exists')
+    }
+
+    const account = 0
+    const coinType = 60 // 60: ethereum
+    const change = 0 // 0 (false): private address
+    const pathLevel = `44'/${coinType}'/${account}'/${change}`
+
+    // Private key derivation reference: https://bitcore.io/api/lib/hd-keys
+    const derivedChild = this.hdPrivateKey.derive(`m/${pathLevel}/${index}`)
+
+    // Includes big number(BN) and network
+    const privateKey = derivedChild.privateKey
+    // Access the big number(BN) and convert to a Buffer - this serves as our private key
+    return privateKey.bn.toBuffer({ size: 32 })
+  }
+
+  /**
+   * Derive a public key from our private key
+   * @return {buffer}
+   */
+  derivePublicKey() {
+    if (!this.privateKey) {
+      throw new Error('Cannot derive a public key: no private key exists')
+    }
+
+    return secp256k1.publicKeyCreate(this.privateKey, false).slice(1)
   }
 
   removeKeys() {
     this.mnemonic = null
+    this.hdPrivateKey = null
+    this.hdPublicKey = null
     this.privateKey = null
     this.publicKey = null
-    this.keysGenerated = false
+    this.keysLoaded = false
   }
 }
 
