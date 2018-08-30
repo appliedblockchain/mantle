@@ -1,0 +1,34 @@
+{
+  "name": "mantle",
+  "version": "1.0.0",
+  "description": "Mantle is a blockchain SDK targeting Ethereum and Hyperledger Fabric",
+  "main": "src/mantle.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appliedblockchain/mantle.git"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/appliedblockchain/mantle/issues"
+  },
+  "homepage": "https://github.com/appliedblockchain/mantle#readme",
+  "eslintConfig": {
+    "extends": "@appliedblockchain"
+  },
+  "dependencies": {
+    "@appliedblockchain/b-privacy": "^1.2.0",
+    "ganache-core": "^2.2.1",
+    "web3": "1.0.0-beta.33"
+  },
+  "devDependencies": {
+    "@appliedblockchain/eslint-config": "^2.3.0",
+    "eslint": "^5.4.0",
+    "ganache-cli": "^6.1.8",
+    "jest": "^23.5.0",
+    "secp256k1": "^3.5.2"
+  }
+}
