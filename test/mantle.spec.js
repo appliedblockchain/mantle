@@ -1,5 +1,6 @@
 const Mantle = require('../src/mantle')
 const secp256k1 = require('secp256k1')
+const crypto = require('crypto')
 const Ganache = require('ganache-core')
 const ganache = Ganache.server()
 
@@ -50,27 +51,57 @@ describe('Mantle', () => {
   })
 
   describe('Privacy', () => {
-    let account, mantle, privateKey, publicKey
+    let account, data, mantle
 
     beforeAll(() => {
       mantle = new Mantle()
       account = mantle.web3.eth.accounts.create()
-      privateKey = Buffer.from(account.privateKey.substring(2), 'hex')
-      publicKey = secp256k1.publicKeyCreate(privateKey, false).slice(1)
+      data = 'foo'
     })
 
-    test('provides asymmetric encryption via encrypt()', () => {
-      const encryptedData = mantle.encrypt('foo', publicKey).toString('hex')
-      expect(encryptedData).toHaveLength(236)
-      expect(encryptedData.slice(0, 2)).toBe('04')
+    describe('asymmetric encryption/decryption', () => {
+      let privateKey, publicKey
+
+      beforeAll(() => {
+        privateKey = Buffer.from(account.privateKey.substring(2), 'hex')
+        publicKey = secp256k1.publicKeyCreate(privateKey, false).slice(1)
+      })
+
+      test('provides asymmetric encryption via encrypt()', () => {
+        const encryptedData = mantle.encrypt(data, publicKey).toString('hex')
+        expect(encryptedData).toHaveLength(236)
+        expect(encryptedData.slice(0, 2)).toBe('04')
+      })
+
+      test('provides asymmetric decryption via decrypt()', () => {
+        const encryptedData = mantle.encrypt(data, publicKey).toString('hex')
+        expect(encryptedData).not.toEqual(data)
+
+        const decryptedData = mantle.decrypt(encryptedData, privateKey)
+        expect(decryptedData).toEqual(data)
+      })
     })
 
-    test('provides asymmetric decryption via decrypt()', () => {
-      const encryptedData = mantle.encrypt('foo', publicKey).toString('hex')
-      expect(encryptedData).not.toEqual('foo')
+    describe('symmetric encryption/decryption', () => {
+      let secret
 
-      const decryptedData = mantle.decrypt(encryptedData, privateKey)
-      expect(decryptedData).toEqual('foo')
+      beforeAll(() => {
+        // Our secret must be 32 bytes
+        secret = crypto.randomBytes(32)
+      })
+
+      test('provides symmetric encryption via encryptSymmetric()', () => {
+        const encryptedData = mantle.encryptSymmetric(data, secret)
+
+        expect(Buffer.isBuffer(encryptedData)).toBe(true)
+        expect(encryptedData.toString()).not.toEqual(data)
+      })
+
+      test('provides symmetric decryption via decryptSymmetric()', () => {
+        const encryptedData = mantle.encryptSymmetric(data, secret)
+        const decryptedData = mantle.decryptSymmetric(encryptedData, secret)
+        expect(decryptedData).toEqual(data)
+      })
     })
   })
 })
