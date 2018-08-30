@@ -12,12 +12,11 @@ describe('Mantle', () => {
     }).toThrow(error)
   })
 
-  test('generates a mnemonic, mnemonicKey and private/public key pair upon initialization', () => {
+  test('generates a mnemonic and private/public key pair upon initialization', () => {
     const mantle = new Mantle()
-    const { mnemonic, mnemonicKey, publicKey, privateKey } = mantle
+    const { mnemonic, publicKey, privateKey } = mantle
 
     expect(mnemonic).toBeTruthy()
-    expect(mnemonicKey).toBeTruthy()
     expect(privateKey).toBeTruthy()
     expect(publicKey).toBeTruthy()
 
@@ -31,6 +30,17 @@ describe('Mantle', () => {
     expect(() => {
       mantle.generateKeys()
     }).toThrow('Keys have already been generated')
+  })
+
+  test('removes keys via removeKeys()', () => {
+    const mantle = new Mantle()
+    mantle.removeKeys()
+
+    const { mnemonic, publicKey, privateKey } = mantle
+
+    expect(mnemonic).toBe(null)
+    expect(privateKey).toBe(null)
+    expect(publicKey).toBe(null)
   })
 
   describe('Web3 integration', () => {

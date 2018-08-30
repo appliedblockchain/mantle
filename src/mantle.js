@@ -111,14 +111,20 @@ class Mantle {
     }
 
     const bPrivacy = new BPrivacy(data)
-    const { mnemonic, mnemonicKey, pubKey, pvtKey } = bPrivacy
+    const { mnemonic, pubKey, pvtKey } = bPrivacy
 
     this.mnemonic = mnemonic
-    this.mnemonicKey = mnemonicKey
     this.privateKey = pvtKey
     this.publicKey = pubKey
 
     this.keysGenerated = true
+  }
+
+  removeKeys() {
+    this.mnemonic = null
+    this.privateKey = null
+    this.publicKey = null
+    this.keysGenerated = false
   }
 }
 
