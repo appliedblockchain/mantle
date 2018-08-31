@@ -1,6 +1,7 @@
 const Mantle = require('../src/mantle')
 const secp256k1 = require('secp256k1')
 const crypto = require('crypto')
+const Mnemonic = require('bitcore-mnemonic')
 const Ganache = require('ganache-core')
 const ganache = Ganache.server()
 
@@ -10,6 +11,78 @@ describe('Mantle', () => {
     expect(() => {
       new Mantle(null)
     }).toThrow(error)
+  })
+
+  describe('Mnemonic/key generation', () => {
+    test('generates a mnemonic, hd keys and a private/public key pair via loadMnemonic()', () => {
+      const mantle = new Mantle()
+      mantle.loadMnemonic()
+
+      const { mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
+
+      expect(mnemonic).toBeTruthy()
+      expect(hdPrivateKey).toBeTruthy()
+      expect(hdPublicKey).toBeTruthy()
+      expect(privateKey).toBeTruthy()
+      expect(publicKey).toBeTruthy()
+
+      expect(typeof mnemonic === 'string').toBe(true)
+      expect(mnemonic.split(' ').length).toEqual(12)
+      expect(Buffer.isBuffer(privateKey)).toBe(true)
+      expect(Buffer.isBuffer(publicKey)).toBe(true)
+    })
+
+    test('generates different keys when not supplying a seed/mnemonic', () => {
+      const mantle1 = new Mantle()
+      const mantle2 = new Mantle()
+
+      mantle1.loadMnemonic()
+      mantle2.loadMnemonic()
+
+      expect(mantle1.mnemonic).not.toEqual(mantle2.mnemonic)
+      expect(mantle1.hdPrivateKey).not.toEqual(mantle2.hdPrivateKey)
+      expect(mantle1.hdPrivateKey).not.toEqual(mantle2.hdPrivateKey)
+      expect(mantle1.privateKey).not.toEqual(mantle2.privateKey)
+      expect(mantle1.publicKey).not.toEqual(mantle2.publicKey)
+    })
+
+    test('generates the same keys when supplying a previously used seed/mnemonic to loadMnemonic()', () => {
+      const mnemonic = new Mnemonic(Mnemonic.Words.ENGLISH).phrase
+
+      const mantle1 = new Mantle()
+      const mantle2 = new Mantle()
+
+      mantle1.loadMnemonic(mnemonic)
+      mantle2.loadMnemonic(mnemonic)
+
+      expect(mantle1.mnemonic).toEqual(mantle2.mnemonic)
+      expect(mantle1.hdPrivateKey).toEqual(mantle2.hdPrivateKey)
+      expect(mantle1.hdPrivateKey).toEqual(mantle2.hdPrivateKey)
+      expect(mantle1.privateKey).toEqual(mantle2.privateKey)
+      expect(mantle1.publicKey).toEqual(mantle2.publicKey)
+    })
+
+    test('throws an error if attempting to load a mnemonic when keys have already been generated', () => {
+      const mantle = new Mantle()
+      mantle.loadMnemonic()
+      expect(() => {
+        mantle.loadMnemonic()
+      }).toThrow('Cannot load mnemonic: a mnemonic has already been loaded')
+    })
+
+    test('removes keys via removeKeys()', () => {
+      const mantle = new Mantle()
+      mantle.loadMnemonic()
+      mantle.removeKeys()
+
+      const { mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
+
+      expect(mnemonic).toBe(null)
+      expect(hdPrivateKey).toBe(null)
+      expect(hdPublicKey).toBe(null)
+      expect(privateKey).toBe(null)
+      expect(publicKey).toBe(null)
+    })
   })
 
   describe('Web3 integration', () => {
