@@ -1,0 +1,39 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# References:
+# https://circleci.com/docs/2.0/language-javascript/
+# https://circleci.com/docs/2.0/configuration-reference/ 
+# https://circleci.com/docs/2.0/caching/
+# https://circleci.com/docs/2.0/circleci-images/
+
+version: 2
+jobs:
+  build:
+    docker:
+    # Primary docker container
+    - image: circleci/node:10.7
+
+    working_directory: ~/mantle 
+
+    steps:
+      - checkout
+
+      - run:
+          name: Authorize NPM
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # Fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: yarn install
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      - run: yarn test
