@@ -1,4 +1,6 @@
 module.exports = {
+  noContractId: () =>
+    new Error('No identifier found for contract: could not initialize'),
   invalidAbi: contract =>
     new Error(`Invalid abi supplied for contract: ${contract}`),
   invalidAddress: contract =>
