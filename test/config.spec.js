@@ -27,12 +27,13 @@ describe('Config', () => {
     })
 
     test('throws an error if a contract is provided without an abi', () => {
-      const contracts = {
-        foo: {
+      const contracts = [
+        {
+          address,
           abi: null,
-          address
+          id: 'foo'
         }
-      }
+      ]
 
       expect(() => {
         new Config({ ...defaults, contracts })
@@ -40,12 +41,13 @@ describe('Config', () => {
     })
 
     test('throws an error if a contract is provided without an address', () => {
-      const contracts = {
-        foo: {
+      const contracts = [
+        {
           abi,
-          address: null
+          address: null,
+          id: 'foo'
         }
-      }
+      ]
 
       expect(() => {
         new Config({ ...defaults, contracts })
@@ -53,12 +55,13 @@ describe('Config', () => {
     })
 
     test('throws an error if an invalid contract abi is provided', () => {
-      const contracts = {
-        foo: {
+      const contracts = [
+        {
           address,
-          abi: 'invalid_abi'
+          abi: 'invalid_abi',
+          id: 'foo'
         }
-      }
+      ]
 
       expect(() => {
         new Config({ ...defaults, contracts })
@@ -66,27 +69,43 @@ describe('Config', () => {
     })
 
     test('throws an error if an invalid contract address is provided', () => {
-      const contracts = {
-        foo: {
+      const contracts = [
+        {
           abi,
-          address: 'invalid_address'
+          address: 'invalid_address',
+          id: 'foo'
         }
-      }
+      ]
 
       expect(() => {
         new Config({ ...defaults, contracts })
       }).toThrow(errors.invalidAddress('foo'))
     })
+
+    test('throws an error if no contract id is provided', () => {
+      const contracts = [
+        {
+          abi,
+          address,
+          id: null
+        }
+      ]
+
+      expect(() => {
+        new Config({ ...defaults, contracts })
+      }).toThrow(errors.noContractId())
+    })
   })
 
   describe('On success', () => {
-    test('successfully initializes when a valid contract address and contract abi are provided', () => {
-      const contracts = {
-        foo: {
+    test('successfully initializes when a valid contract id, contract address and contract abi are provided', () => {
+      const contracts = [
+        {
           abi,
-          address
+          address,
+          id: 'foo'
         }
-      }
+      ]
 
       const config = new Config({ ...defaults, contracts })
       expect(config.blockchain).toEqual(defaults.blockchain)

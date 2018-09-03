@@ -11,6 +11,6 @@ module.exports = {
       gasPrice: 10 ^ 16
     }
   },
-  contracts: {},
+  contracts: [],
   servers: []
 }
