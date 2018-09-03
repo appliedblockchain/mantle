@@ -1,16 +1,55 @@
 const Mantle = require('../src/mantle')
+const defaults = require('../src/defaults')
 const errors = require('../src/errors')
 const secp256k1 = require('secp256k1')
 const crypto = require('crypto')
 const Mnemonic = require('bitcore-mnemonic')
 const Ganache = require('ganache-core')
 const ganache = Ganache.server()
+const { fromAscii } = require('web3-utils')
 
 describe('Mantle', () => {
   test('throws an error if no configuration is provided', () => {
     expect(() => {
       new Mantle(null)
     }).toThrow(errors.invalidConfig())
+  })
+
+  describe('Contract', () => {
+    let address, contract
+
+    beforeAll(() => {
+      address = '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'
+
+      contract = {
+        address,
+        id: 'bar',
+        abi: [ {
+          'type': 'function',
+          'name': 'foo',
+          'constant': false,
+          'payable': false,
+          'stateMutability': 'nonpayable',
+          'inputs': [ { 'name': 'b', 'type': 'uint256' }, { 'name': 'c', 'type': 'bytes32' } ],
+          'outputs': [ { 'name': '', 'type': 'address' } ]
+        } ]
+      }
+    })
+
+    test('exposes call and send methods to contract functions defined by the abi', async () => {
+      await ganache.listen(8545)
+      try {
+        const contracts = [ contract ]
+        const config = { ...defaults, contracts }
+        const mantle = new Mantle(config)
+
+        const foo = await mantle.contracts.bar.methods.foo(1, fromAscii(2))
+        expect(typeof foo.call).toEqual('function')
+        expect(typeof foo.send).toEqual('function')
+      } finally {
+        await ganache.close()
+      }
+    })
   })
 
   describe('Mnemonic/key generation', () => {

@@ -13,9 +13,23 @@ class Mantle {
       throw err
     }
 
+    this.contracts = {}
     this.keysLoaded = false
 
     this.setupWeb3Provider()
+    this.loadContracts()
+  }
+
+  loadContracts() {
+    this.config.contracts.forEach(contract => {
+      this.loadContract(contract)
+    })
+  }
+
+  loadContract(contract) {
+    const { id, abi, address } = contract
+    this.contracts[id] = new this.web3.eth.Contract(abi, address)
+    return this.contracts[id]
   }
 
   get Web3() {
