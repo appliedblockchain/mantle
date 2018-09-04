@@ -1,5 +1,9 @@
 # Mantle
 
+# IPFS
+
+- Install IPFS: https://ipfs.io/docs/install/
+
 Mantle SDK repository
 
 ### Initialising a new Mantle instance:
