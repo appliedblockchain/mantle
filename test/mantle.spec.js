@@ -1,4 +1,5 @@
 const Mantle = require('../src/mantle')
+const IPFS = require('../src/ipfs')
 const defaults = require('../src/defaults')
 const errors = require('../src/errors')
 const secp256k1 = require('secp256k1')
@@ -12,6 +13,14 @@ describe('Mantle', () => {
     expect(() => {
       new Mantle(null)
     }).toThrow(errors.invalidConfig())
+  })
+
+  describe('IPFS integration', () => {
+    test('exposes an ipfs object on initialization', () => {
+      const mantle = new Mantle()
+      expect(typeof mantle.ipfs).toEqual('object')
+      expect(mantle.ipfs.constructor).toEqual(IPFS)
+    })
   })
 
   describe('Contract', () => {
