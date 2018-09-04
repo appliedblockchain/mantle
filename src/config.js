@@ -39,6 +39,8 @@ class Config {
   }
 
   /**
+   * All contracts need an identifier and JSON interface (defined by the ABI).
+   * Contract addresses are optional.
    * @param  {Object} contracts
    * @return {void}
    */
@@ -52,7 +54,7 @@ class Config {
         throw errors.invalidAbi(id)
       }
 
-      if (!isAddress(address)) {
+      if (address && !isAddress(address)) {
         throw errors.invalidAddress(id)
       }
     })
