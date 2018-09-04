@@ -1,12 +1,12 @@
 const IPFS = require('../src/ipfs')
 const defaults = require('../src/defaults')
-const crypto = require('crypto')
 
 describe('IPFS', () => {
-  let ipfs
+  let data, ipfs
 
   beforeAll(() => {
     ipfs = new IPFS(defaults.ipfs)
+    data = Buffer.from('foo')
   })
 
   describe('Files API', () => {
@@ -18,19 +18,50 @@ describe('IPFS', () => {
       expect(typeof ipfs.files.rm).toEqual('function')
     })
 
-    test.only('stores data', () => {
-      const data = crypto.randomBytes(32)
-      const storedData = ipfs.add(data)
-      console.log('stored', storedData)
+    test('stores data', async () => {
+      const [ storedData ] = await ipfs.add(data)
+      expect(typeof storedData.hash).toEqual('string')
+      expect(storedData.hash.substring(0, 2)).toEqual('Qm')
+    })
+
+    test('retrieves data via hash', async () => {
+      const [ storedData ] = await ipfs.add(data)
+      const [ retrievedData ] = await ipfs.get(storedData.hash)
+      expect(retrievedData.content).toEqual(data)
     })
   })
 
   describe('Pin API', () => {
+    let hash
+
+    beforeAll(async () => {
+      const [ storedData ] = await ipfs.add(data)
+      hash = storedData.hash
+    })
+
     test('exposes a pin object with callable methods', () => {
       expect(typeof ipfs.pin).toEqual('object')
       expect(typeof ipfs.pin.add).toEqual('function')
       expect(typeof ipfs.pin.ls).toEqual('function')
       expect(typeof ipfs.pin.rm).toEqual('function')
+    })
+
+    test('adds a pin', async () => {
+      await ipfs.pin.add(hash)
+      const [ pin ] = await ipfs.pin.ls(hash)
+      expect(pin.hash).toEqual(hash)
+    })
+
+    test('removes a pin', async () => {
+      await ipfs.pin.add(hash)
+      await ipfs.pin.rm(hash)
+
+      try {
+        await ipfs.pin.ls(hash)
+      } catch (err) {
+        expect(err.constructor === Error)
+        expect(err.message).toEqual(`path '${hash}' is not pinned`)
+      }
     })
   })
 })

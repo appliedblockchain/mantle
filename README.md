@@ -1,9 +1,5 @@
 # Mantle
 
-# IPFS
-
-- Install IPFS: https://ipfs.io/docs/install/
-
 Mantle SDK repository
 
 ### Initialising a new Mantle instance:
@@ -20,6 +16,15 @@ Mnemonic, HD private/public keys and private/public keys are generated via `load
 
 Facilitated via the `encryptSymmetric` and `decryptSymmetric` methods. Shared secrets can be generated via `createSharedSecret`.
 
+# IPFS setup
+
+- Install IPFS: https://ipfs.io/docs/install/
+
+- Ensure that you have initialized IPFS and have an IPFS daemon instance running before attempting to interact with the API:
+
+    - `ipfs init`
+    - `ipfs daemon`
+
 
 # Examples
 
@@ -27,7 +32,7 @@ Please see tests in `test/mantle.spec.js` for further examples.
 
 ### Mnemonic generation and key removal
 
-```
+```js
 mantle.mnemonic // undefined
 
 mantle.loadMnemonic() // No argument supplied - used for new accounts
@@ -42,7 +47,7 @@ mantle.loadMnemonic('tragic panic toast hazard royal marine visual laptop salmon
 
 ### Asymmetric encryption/decryption
 
-```
+```js
 const data = 'foo'
 
 const encrypted = mantle.encrypt(data, mantle.publicKey) // Returns a buffer
@@ -52,7 +57,7 @@ const decrypted = mantle.decrypt(encrypted, mantle.privateKey) // 'foo'
 
 ### Symmetric encryption/decryption
 
-```
+```js
 const data = 'foo'
 const secret = mantle.createSharedSecret()
 
@@ -64,6 +69,7 @@ const decrypted = mantle.decryptSymmetric(encrypted, secret) // 'foo'
 # Local testing
 
 - Install dependencies: `npm install`
+- Install and initialize IPFS ([see IPFS setup section](#ipfs-setup))
 - Run test suite: `npm test`
 
 # Documentation
