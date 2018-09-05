@@ -44,7 +44,7 @@ describe('Config', () => {
       const contracts = [
         {
           abi,
-          address: null,
+          address: 'invalid_address',
           id: 'foo'
         }
       ]

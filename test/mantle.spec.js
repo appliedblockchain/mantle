@@ -1,8 +1,10 @@
 const Mantle = require('../src/mantle')
+const defaults = require('../src/defaults')
 const errors = require('../src/errors')
 const secp256k1 = require('secp256k1')
 const crypto = require('crypto')
 const Mnemonic = require('bitcore-mnemonic')
+const { fromAscii } = require('web3-utils')
 const Ganache = require('ganache-core')
 const ganache = Ganache.server()
 
@@ -11,6 +13,59 @@ describe('Mantle', () => {
     expect(() => {
       new Mantle(null)
     }).toThrow(errors.invalidConfig())
+  })
+
+  describe('Contract', () => {
+    let address, contract, contractId
+
+    beforeAll(() => {
+      address = '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'
+      contractId = 'bar'
+
+      contract = {
+        address,
+        id: contractId,
+        abi: [ {
+          type: 'function',
+          name: 'foo',
+          constant: false,
+          payable: false,
+          stateMutability: 'nonpayable',
+          inputs: [ { 'name': 'b', 'type': 'uint256' }, { 'name': 'c', 'type': 'bytes32' } ],
+          outputs: [ { 'name': '', 'type': 'address' } ]
+        } ]
+      }
+    })
+
+    test('adds contracts on demand', () => {
+      const mantle = new Mantle(defaults)
+      expect(Object.keys(mantle.contracts).length).toEqual(0)
+
+      mantle.loadContract(contract)
+      expect(mantle.contracts[contractId]).toBeTruthy()
+      expect(mantle.contracts[contractId]._address).toEqual(address)
+    })
+
+    test('exposes call and send methods to contract functions defined by the abi', async () => {
+      await ganache.listen(8545)
+      try {
+        const contracts = [ contract ]
+        const config = { ...defaults, contracts }
+        const mantle = new Mantle(config)
+
+        const argA = 1
+        const argB = fromAscii(2) // Convert to bytes32 format
+
+        const foo = await mantle.contracts[contractId].methods.foo(argA, argB)
+
+        expect(typeof foo.call).toEqual('function')
+        expect(typeof foo.send).toEqual('function')
+        expect(foo.arguments).toEqual([ argA, argB ])
+        expect(mantle.contracts[contractId]._address).toEqual(address)
+      } finally {
+        await ganache.close()
+      }
+    })
   })
 
   describe('Mnemonic/key generation', () => {
