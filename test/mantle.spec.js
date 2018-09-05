@@ -1,4 +1,5 @@
 const Mantle = require('../src/mantle')
+const errors = require('../src/errors')
 const secp256k1 = require('secp256k1')
 const crypto = require('crypto')
 const Mnemonic = require('bitcore-mnemonic')
@@ -7,10 +8,9 @@ const ganache = Ganache.server()
 
 describe('Mantle', () => {
   test('throws an error if no configuration is provided', () => {
-    const error = 'No configuration provided: cannot initialize Mantle'
     expect(() => {
       new Mantle(null)
-    }).toThrow(error)
+    }).toThrow(errors.invalidConfig())
   })
 
   describe('Mnemonic/key generation', () => {
