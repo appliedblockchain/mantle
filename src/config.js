@@ -1,3 +1,4 @@
+const attachToObject = require('./utils/attachToObject')
 const { isArray, isObject } = require('./utils/typeChecks')
 const { isAddress } = require('web3-utils')
 const errors = require('./errors')
@@ -9,10 +10,7 @@ class Config {
 
     // Override default properties
     config = { ...defaults, ...config }
-
-    this.blockchain = config.blockchain
-    this.contracts = config.contracts
-    this.ethereum = config.ethereum
+    attachToObject(this, config)
   }
 
   /**
