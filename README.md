@@ -2,6 +2,66 @@
 
 Mantle SDK repository
 
-### Documentation
+### Initialising a new Mantle instance:
+
+`const mantle = new Mantle()`
+
+The mantle instance exposes methods to facilitate, amongst other things, asymmetric/symmetric encryption/decryption, mnemonic and HD public/private key generation etc.
+
+### Mnemonic generation
+
+Mnemonic, HD private/public keys and private/public keys are generated via `loadMnemonic`. Supply a mnemonic associated with an existing account in order to retrieve key information, or supply no argument in order to generate a new set of keys.
+
+### Symmetric encryption
+
+Facilitated via the `encryptSymmetric` and `decryptSymmetric` methods. Shared secrets can be generated via `createSharedSecret`.
+
+
+# Examples
+
+Please see tests in `test/mantle.spec.js` for further examples.
+
+### Mnemonic generation and key removal
+
+```
+mantle.mnemonic // undefined
+
+mantle.loadMnemonic() // No argument supplied - used for new accounts
+
+mantle.mnemonic // 'knife zone arch average surround tape napkin elephant share fuel jeans false'
+
+mantle.removeKeys()
+mantle.mnemonic // null
+
+mantle.loadMnemonic('tragic panic toast hazard royal marine visual laptop salmon guard finger upper') // Mnemonc supplied - should be used to load existing keys
+```
+
+### Asymmetric encryption/decryption
+
+```
+const data = 'foo'
+
+const encrypted = mantle.encrypt(data, mantle.publicKey) // Returns a buffer
+
+const decrypted = mantle.decrypt(encrypted, mantle.privateKey) // 'foo'
+```
+
+### Symmetric encryption/decryption
+
+```
+const data = 'foo'
+const secret = mantle.createSharedSecret()
+
+const encrypted = mantle.encryptSymmetric(data, secret) // Returns a Buffer
+
+const decrypted = mantle.decryptSymmetric(encrypted, secret) // 'foo'
+```
+
+# Local testing
+
+- Install dependencies: `npm install`
+- Run test suite: `npm test`
+
+# Documentation
 
 Please check the documentation created in this repo: https://github.com/appliedblockchain/mantle-intro-doc

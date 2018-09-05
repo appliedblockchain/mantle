@@ -214,8 +214,7 @@ describe('Mantle', () => {
       let secret
 
       beforeAll(() => {
-        // Our secret must be 32 bytes
-        secret = crypto.randomBytes(32)
+        secret = mantle.createSharedSecret()
       })
 
       test('provides symmetric encryption via encryptSymmetric()', () => {
