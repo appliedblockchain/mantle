@@ -9,6 +9,36 @@ describe('IPFS', () => {
     data = Buffer.from('foo')
   })
 
+  describe('Custom methods', () => {
+    test('retrieves data via retrieve()', async () => {
+      const hash = await ipfs.store(data)
+      const retrievedData = await ipfs.retrieve(hash)
+      expect(retrievedData).toEqual(data)
+    })
+
+    test('stores and pins data via store()', async () => {
+      const hash = await ipfs.store(data)
+      expect(typeof hash).toEqual('string')
+      expect(hash.startsWith('Qm')).toBe(true)
+
+      const [ retrievedData ] = await ipfs.pin.ls(hash)
+      expect(retrievedData.hash).toEqual(hash)
+    })
+
+    test('removes a file from your node via remove()', async () => {
+      const hash = await ipfs.store(data)
+
+      ipfs.remove(hash)
+
+      try {
+        await ipfs.pin.ls(hash)
+      } catch (err) {
+        expect(err.constructor === Error)
+        expect(err.message).toEqual(`path '${hash}' is not pinned`)
+      }
+    })
+  })
+
   describe('Files API', () => {
     test('exposes a files object with callable methods', () => {
       expect(typeof ipfs.files).toEqual('object')
@@ -21,7 +51,7 @@ describe('IPFS', () => {
     test('stores data', async () => {
       const [ storedData ] = await ipfs.add(data)
       expect(typeof storedData.hash).toEqual('string')
-      expect(storedData.hash.substring(0, 2)).toEqual('Qm')
+      expect(storedData.hash.startsWith('Qm')).toBe(true)
     })
 
     test('retrieves data via hash', async () => {

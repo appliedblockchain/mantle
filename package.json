@@ -4,7 +4,7 @@
   "description": "Mantle is a blockchain SDK targeting Ethereum and Hyperledger Fabric",
   "main": "src/mantle.js",
   "scripts": {
-    "test": "ipfs daemon & jest && ipfs shutdown"
+    "test": "jest"
   },
   "repository": {
     "type": "git",

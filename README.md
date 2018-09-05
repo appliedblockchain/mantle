@@ -70,6 +70,7 @@ const decrypted = mantle.decryptSymmetric(encrypted, secret) // 'foo'
 
 - Install dependencies: `npm install`
 - Install and initialize IPFS ([see IPFS setup section](#ipfs-setup))
+- Run the IPFS daemon: `ipfs daemon`
 - Run test suite: `npm test`
 
 # Documentation
