@@ -185,14 +185,14 @@ class Mantle {
       throw new Error('Cannot derive a private key: no HD private key exists')
     }
 
-    const account = 0
-    const coinType = 60 // 60: ethereum
-    const change = 0 // 0 (false): private address
-    const pathLevel = `44'/${coinType}'/${account}'/${change}`
+    const PURPOSE = 44 // 44: BIP44 specification
+    const COIN_TYPE = 60 // 60: ethereum
+    const ACCOUNT = 0
+    const CHANGE = 0 // 0: public
+    const PATH_LEVEL = `${PURPOSE}'/${COIN_TYPE}'/${ACCOUNT}'/${CHANGE}`
 
-    // Private key derivation reference: https://bitcore.io/api/lib/hd-keys
-    const derivedChild = this.hdPrivateKey.derive(`m/${pathLevel}/${index}`)
-
+    // Private key derivation reference: https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+    const derivedChild = this.hdPrivateKey.derive(`m/${PATH_LEVEL}/${index}`)
     // Includes big number(BN) and network
     const privateKey = derivedChild.privateKey
 
