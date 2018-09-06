@@ -6,6 +6,7 @@ const secp256k1 = require('secp256k1')
 const Config = require('./config')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
+const ethUtils = require('ethereumjs-util')
 
 class Mantle {
   constructor(config) {
