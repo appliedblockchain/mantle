@@ -81,14 +81,17 @@ describe('Mantle', () => {
       const mantle = new Mantle()
       mantle.loadMnemonic()
 
-      const { mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
+      const { address, mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
 
+      expect(address).toBeTruthy()
       expect(mnemonic).toBeTruthy()
       expect(hdPrivateKey).toBeTruthy()
       expect(hdPublicKey).toBeTruthy()
       expect(privateKey).toBeTruthy()
       expect(publicKey).toBeTruthy()
 
+      expect(typeof address === 'string').toBe(true)
+      expect(address.startsWith('0x')).toBe(true)
       expect(typeof mnemonic === 'string').toBe(true)
       expect(mnemonic.split(' ').length).toEqual(12)
       expect(Buffer.isBuffer(privateKey)).toBe(true)
@@ -102,6 +105,7 @@ describe('Mantle', () => {
       mantle1.loadMnemonic()
       mantle2.loadMnemonic()
 
+      expect(mantle1.address).not.toEqual(mantle2.address)
       expect(mantle1.mnemonic).not.toEqual(mantle2.mnemonic)
       expect(mantle1.hdPrivateKey).not.toEqual(mantle2.hdPrivateKey)
       expect(mantle1.hdPrivateKey).not.toEqual(mantle2.hdPrivateKey)
@@ -118,6 +122,7 @@ describe('Mantle', () => {
       mantle1.loadMnemonic(mnemonic)
       mantle2.loadMnemonic(mnemonic)
 
+      expect(mantle1.address).toEqual(mantle2.address)
       expect(mantle1.mnemonic).toEqual(mantle2.mnemonic)
       expect(mantle1.hdPrivateKey).toEqual(mantle2.hdPrivateKey)
       expect(mantle1.hdPrivateKey).toEqual(mantle2.hdPrivateKey)
@@ -138,8 +143,9 @@ describe('Mantle', () => {
       mantle.loadMnemonic()
       mantle.removeKeys()
 
-      const { mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
+      const { address, mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
 
+      expect(address).toBe(null)
       expect(mnemonic).toBe(null)
       expect(hdPrivateKey).toBe(null)
       expect(hdPublicKey).toBe(null)

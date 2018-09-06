@@ -22,6 +22,7 @@
   "dependencies": {
     "@appliedblockchain/b-privacy": "^1.2.0",
     "bitcore-mnemonic": "^1.5.0",
+    "ethereumjs-util": "^5.2.0",
     "ganache-core": "^2.2.1",
     "ipfs-api": "^24.0.1",
     "web3": "1.0.0-beta.33"

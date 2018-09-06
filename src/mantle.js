@@ -6,6 +6,7 @@ const secp256k1 = require('secp256k1')
 const Config = require('./config')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
+const ethUtils = require('ethereumjs-util')
 
 class Mantle {
   constructor(config) {
@@ -153,8 +154,25 @@ class Mantle {
     this.hdPublicKey = hdPublicKey
     this.privateKey = this.derivePrivateKey()
     this.publicKey = this.derivePublicKey()
+    this.address = this.deriveEthereumAddress()
 
     this.keysLoaded = true
+  }
+
+  /**
+   * Derive a checksum address from our private key
+   * @return {string}
+   */
+  deriveEthereumAddress() {
+    if (!this.privateKey) {
+      throw new Error('Cannot derive an ethereum address: no private key exists')
+    }
+
+    const address = '0x' + ethUtils
+      .privateToAddress(this.privateKey)
+      .toString('hex')
+
+    return ethUtils.toChecksumAddress(address)
   }
 
   /**
@@ -177,6 +195,7 @@ class Mantle {
 
     // Includes big number(BN) and network
     const privateKey = derivedChild.privateKey
+
     // Access the big number(BN) and convert to a Buffer - this serves as our private key
     return privateKey.bn.toBuffer({ size: 32 })
   }
@@ -194,6 +213,7 @@ class Mantle {
   }
 
   removeKeys() {
+    this.address = null
     this.mnemonic = null
     this.hdPrivateKey = null
     this.hdPublicKey = null
