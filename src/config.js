@@ -5,10 +5,14 @@ const defaults = require('./defaults')
 
 class Config {
   constructor(config = defaults) {
-    this.validateConfig(config)
+    if (!isObject(config)) {
+      throw errors.invalidConfig()
+    }
 
     // Override default properties
     config = { ...defaults, ...config }
+    this.validateConfig(config)
+
     Object.assign(this, config)
   }
 
@@ -17,10 +21,6 @@ class Config {
    * @return {void}
    */
   validateConfig(config) {
-    if (!isObject(config)) {
-      throw errors.invalidConfig()
-    }
-
     this.validateBlockchain(config.blockchain)
     this.validateContracts(config.contracts)
   }
