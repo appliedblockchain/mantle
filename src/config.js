@@ -9,10 +9,7 @@ class Config {
 
     // Override default properties
     config = { ...defaults, ...config }
-
-    this.blockchain = config.blockchain
-    this.contracts = config.contracts
-    this.ethereum = config.ethereum
+    Object.assign(this, config)
   }
 
   /**

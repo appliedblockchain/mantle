@@ -65,9 +65,7 @@ class Mantle {
   }
 
   setupWeb3Provider() {
-    const { port = 8545 } = this.config
-    const defaultProviderUrl = `http://localhost:${port}`
-    const web3 = new Web3(defaultProviderUrl)
+    const web3 = new Web3(this.config.provider)
     this.web3 = web3
   }
 

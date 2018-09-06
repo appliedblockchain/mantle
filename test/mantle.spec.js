@@ -2,7 +2,6 @@ const Mantle = require('../src/mantle')
 const defaults = require('../src/defaults')
 const errors = require('../src/errors')
 const secp256k1 = require('secp256k1')
-const crypto = require('crypto')
 const Mnemonic = require('bitcore-mnemonic')
 const { fromAscii } = require('web3-utils')
 const Ganache = require('ganache-core')
@@ -175,6 +174,12 @@ describe('Mantle', () => {
     test('exposes web3 module as an instance property', async () => {
       const mantle = new Mantle()
       expect(mantle.web3.version).toBe(WEB3_VER)
+    })
+
+    test('sets a web3 provider as the current provider if configured to do so', () => {
+      const provider = new Mantle.Web3.providers.HttpProvider('http://localhost:3000')
+      const mantle = new Mantle({ ...defaults, provider })
+      expect(mantle.web3.currentProvider).toEqual(provider)
     })
   })
 

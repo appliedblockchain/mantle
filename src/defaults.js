@@ -12,5 +12,6 @@ module.exports = {
     }
   },
   contracts: [],
-  servers: []
+  servers: [],
+  provider: 'http://localhost:8545'
 }
