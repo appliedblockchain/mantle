@@ -1,4 +1,3 @@
-const attachToObject = require('./utils/attachToObject')
 const { isArray, isObject } = require('./utils/typeChecks')
 const { isAddress } = require('web3-utils')
 const errors = require('./errors')
@@ -10,7 +9,7 @@ class Config {
 
     // Override default properties
     config = { ...defaults, ...config }
-    attachToObject(this, config)
+    Object.assign(this, config)
   }
 
   /**
