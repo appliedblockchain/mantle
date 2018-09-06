@@ -44,7 +44,7 @@ describe('Config', () => {
       const contracts = [
         {
           abi,
-          address: 'invalid_address',
+          address: '@invalid_address',
           id: 'foo'
         }
       ]
@@ -58,7 +58,7 @@ describe('Config', () => {
       const contracts = [
         {
           address,
-          abi: 'invalid_abi',
+          abi: '@invalid_abi',
           id: 'foo'
         }
       ]
@@ -72,7 +72,7 @@ describe('Config', () => {
       const contracts = [
         {
           abi,
-          address: 'invalid_address',
+          address: '@invalid_address',
           id: 'foo'
         }
       ]

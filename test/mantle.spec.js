@@ -9,9 +9,10 @@ const Ganache = require('ganache-core')
 const ethUtils = require('ethereumjs-util')
 
 describe('Mantle', () => {
-  let server
+  let server, data
 
   beforeAll(async () => {
+    data = 'foo'
     server = Ganache.server()
     await server.listen(8545)
   })
@@ -31,6 +32,79 @@ describe('Mantle', () => {
       const mantle = new Mantle()
       expect(typeof mantle.ipfs).toEqual('object')
       expect(mantle.ipfs.constructor).toEqual(IPFS)
+    })
+  })
+
+  describe('Signing', () => {
+    test('throws an error when no private key exists', () => {
+      const hash = Mantle.generateHash(data)
+      const mantle = new Mantle()
+
+      expect(() => {
+        mantle.sign(hash)
+      }).toThrow()
+    })
+
+    test('throws an error when providing an invalid hash', () => {
+      const hash = '@invalid_hash'
+      const mantle = new Mantle()
+
+      mantle.loadMnemonic()
+      expect(() => {
+        mantle.sign(hash)
+      }).toThrow()
+    })
+
+    test('generates a message signature via sign()', () => {
+      const hash = Mantle.generateHash(data)
+      const mantle = new Mantle()
+
+      mantle.loadMnemonic()
+      const signature = mantle.sign(hash)
+
+      expect(signature).toBeTruthy()
+      expect(signature.startsWith('0x')).toBe(true)
+    })
+  })
+
+  describe('Recovery', () => {
+    test('throws an error when providing an invalid hash', () => {
+      const hash = Mantle.generateHash(data)
+      const mantle = new Mantle()
+
+      mantle.loadMnemonic()
+      const signature = mantle.sign(hash)
+
+      const invalidHash = '@invalid_hash'
+
+      expect(() => {
+        mantle.recover(invalidHash, signature)
+      }).toThrow()
+    })
+
+    test('throws an error when providing an invalid signature', () => {
+      const hash = Mantle.generateHash(data)
+      const mantle = new Mantle()
+
+      mantle.loadMnemonic()
+      mantle.sign(hash)
+
+      const invalidSignature = '@invalid_signature'
+
+      expect(() => {
+        mantle.recover(hash, invalidSignature)
+      }).toThrow()
+    })
+
+    test('recovers the public key for an account that signed some data, via recover()', () => {
+      const hash = Mantle.generateHash(data)
+      const mantle = new Mantle()
+
+      mantle.loadMnemonic()
+      const signature = mantle.sign(hash)
+      const publicKey = mantle.recover(hash, signature)
+
+      expect(publicKey).toEqual('0x' + mantle.publicKey.toString('hex'))
     })
   })
 
@@ -210,12 +284,18 @@ describe('Mantle', () => {
   })
 
   describe('Privacy', () => {
-    let account, data, mantle
+    let account, mantle
 
     beforeAll(() => {
       mantle = new Mantle()
       account = mantle.web3.eth.accounts.create()
-      data = 'foo'
+    })
+
+    test('generates a hash via generateHash()', () => {
+      const hash = Mantle.generateHash(data)
+
+      expect(hash.startsWith('0x')).toBe(true)
+      expect(Buffer.from(hash.slice(2), 'hex').length).toEqual(32)
     })
 
     describe('asymmetric encryption/decryption', () => {
