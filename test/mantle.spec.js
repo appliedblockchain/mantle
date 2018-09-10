@@ -6,6 +6,7 @@ const secp256k1 = require('secp256k1')
 const Mnemonic = require('bitcore-mnemonic')
 const { fromAscii } = require('web3-utils')
 const Ganache = require('ganache-core')
+const ethUtils = require('ethereumjs-util')
 
 describe('Mantle', () => {
   let server
@@ -97,6 +98,7 @@ describe('Mantle', () => {
 
       expect(typeof address === 'string').toBe(true)
       expect(address.startsWith('0x')).toBe(true)
+      expect(ethUtils.isValidChecksumAddress(address)).toBe(true)
       expect(typeof mnemonic === 'string').toBe(true)
       expect(mnemonic.split(' ').length).toEqual(12)
       expect(Buffer.isBuffer(privateKey)).toBe(true)

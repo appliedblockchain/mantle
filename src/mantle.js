@@ -6,7 +6,6 @@ const secp256k1 = require('secp256k1')
 const Config = require('./config')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
-const ethUtils = require('ethereumjs-util')
 
 class Mantle {
   constructor(config) {
@@ -168,11 +167,9 @@ class Mantle {
       throw new Error('Cannot derive an ethereum address: no private key exists')
     }
 
-    const address = '0x' + ethUtils
-      .privateToAddress(this.privateKey)
-      .toString('hex')
-
-    return ethUtils.toChecksumAddress(address)
+    // Create a checksum address
+    const { address } = this.web3.eth.accounts.privateKeyToAccount(this.privateKey)
+    return address
   }
 
   /**
