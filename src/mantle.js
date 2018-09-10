@@ -6,6 +6,7 @@ const secp256k1 = require('secp256k1')
 const Config = require('./config')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
+const { isHex0x } = require('./utils/typeChecks')
 
 class Mantle {
   constructor(config) {
@@ -21,6 +22,19 @@ class Mantle {
 
     this.setupWeb3Provider()
     this.loadContracts(this.config.contracts)
+  }
+
+  static get Web3() {
+    return Web3
+  }
+
+  /**
+   * Generates a hash from a list of values
+   * @param  {*} ...args
+   * @return {hex0x}
+   */
+  static generateHash(...args) {
+    return BPrivacy.callHash(...args)
   }
 
   /**
@@ -50,10 +64,6 @@ class Mantle {
   }
 
   get Web3() {
-    return Web3
-  }
-
-  static get Web3() {
     return Web3
   }
 
@@ -217,6 +227,74 @@ class Mantle {
     this.privateKey = null
     this.publicKey = null
     this.keysLoaded = false
+  }
+
+  /**
+   * Create an ECDSA signature from a 32-byte buffer by applying secp256k1's signature generation algorithm
+   *
+   * Our signature composes of:
+   * - 32-byte scalar `r` (part of the ECDSA signature)
+   * - 32-byte scalar `s` (part of the ECDSA signature)
+   * - A recovery id `v` used for public key recovery
+   * @param  {hex0x} hash
+   * @return {hex0x}
+   */
+  sign(hash) {
+    if (!this.privateKey) {
+      throw new Error('Cannot sign message: private key required')
+    }
+
+    if (!isHex0x(hash)) {
+      throw new Error('Unexpected format for provided hash: expected hex0x format')
+    }
+
+    // Convert hash to buffer to conform with secp256k1.sign required argument types
+    const hashBuffer = Buffer.from(hash.slice(2), 'hex')
+
+    const { signature, recovery } = secp256k1.sign(hashBuffer, this.privateKey)
+
+    const RECOVERY_ID = 27
+    const r = signature.slice(0, 32).toString('hex')
+    const s = signature.slice(32, 64).toString('hex')
+    const v = Buffer.from([ recovery + RECOVERY_ID ]).toString('hex')
+
+    return `0x${r}${s}${v}`
+  }
+
+  /**
+   * Recovers public key from a message hash and ECDSA signature
+   * @param  {hex0x} hash
+   * @param  {hex0x} ecSignature An ECDSA generated signature
+   * @return {hex0x}
+   */
+  recover(hash, ecSignature) {
+    // Convert hash and ecSignature to buffers to conform with secp256k1.recover required argument types
+    const hashBuffer = Buffer.from(hash.slice(2), 'hex')
+    if (hashBuffer.length !== 32) {
+      throw new Error(`Invalid hash buffer length ${hashBuffer.length}: expected 32`)
+    }
+
+    const ecSignatureBuffer = Buffer.from(ecSignature.slice(2), 'hex')
+    if (ecSignatureBuffer.length !== 32 + 32 + 1) {
+      throw new Error(`Invalid signature buffer length ${ecSignatureBuffer.length}: expected (32 + 32 + 1`)
+    }
+
+    const RECOVERY_ID = 27
+    const signature = ecSignatureBuffer.slice(0, 64)
+    const recovery = ecSignatureBuffer[64] - RECOVERY_ID
+
+    if (recovery !== 0 && recovery !== 1) {
+      throw new Error('Invalid recovery value: expected 0 or 1')
+    }
+
+    const publicKeyBuffer = secp256k1.recover(hashBuffer, signature, recovery)
+
+    const publicKey = secp256k1
+      .publicKeyConvert(publicKeyBuffer, false)
+      .slice(1)
+      .toString('hex')
+
+    return `0x${publicKey}`
   }
 }
 
