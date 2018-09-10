@@ -6,9 +6,20 @@ const secp256k1 = require('secp256k1')
 const Mnemonic = require('bitcore-mnemonic')
 const { fromAscii } = require('web3-utils')
 const Ganache = require('ganache-core')
-const ganache = Ganache.server()
+const ethUtils = require('ethereumjs-util')
 
 describe('Mantle', () => {
+  let server
+
+  beforeAll(async () => {
+    server = Ganache.server()
+    await server.listen(8545)
+  })
+
+  afterAll(async () => {
+    await server.close()
+  })
+
   test('throws an error if no configuration is provided', () => {
     expect(() => {
       new Mantle(null)
@@ -55,24 +66,19 @@ describe('Mantle', () => {
     })
 
     test('exposes call and send methods to contract functions defined by the abi', async () => {
-      await ganache.listen(8545)
-      try {
-        const contracts = [ contract ]
-        const config = { ...defaults, contracts }
-        const mantle = new Mantle(config)
+      const contracts = [ contract ]
+      const config = { contracts }
+      const mantle = new Mantle(config)
 
-        const argA = 1
-        const argB = fromAscii(2) // Convert to bytes32 format
+      const argA = 1
+      const argB = fromAscii(2) // Convert to bytes32 format
 
-        const foo = await mantle.contracts[contractId].methods.foo(argA, argB)
+      const foo = await mantle.contracts[contractId].methods.foo(argA, argB)
 
-        expect(typeof foo.call).toEqual('function')
-        expect(typeof foo.send).toEqual('function')
-        expect(foo.arguments).toEqual([ argA, argB ])
-        expect(mantle.contracts[contractId]._address).toEqual(address)
-      } finally {
-        await ganache.close()
-      }
+      expect(typeof foo.call).toEqual('function')
+      expect(typeof foo.send).toEqual('function')
+      expect(foo.arguments).toEqual([ argA, argB ])
+      expect(mantle.contracts[contractId]._address).toEqual(address)
     })
   })
 
@@ -81,14 +87,18 @@ describe('Mantle', () => {
       const mantle = new Mantle()
       mantle.loadMnemonic()
 
-      const { mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
+      const { address, mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
 
+      expect(address).toBeTruthy()
       expect(mnemonic).toBeTruthy()
       expect(hdPrivateKey).toBeTruthy()
       expect(hdPublicKey).toBeTruthy()
       expect(privateKey).toBeTruthy()
       expect(publicKey).toBeTruthy()
 
+      expect(typeof address === 'string').toBe(true)
+      expect(address.startsWith('0x')).toBe(true)
+      expect(ethUtils.isValidChecksumAddress(address)).toBe(true)
       expect(typeof mnemonic === 'string').toBe(true)
       expect(mnemonic.split(' ').length).toEqual(12)
       expect(Buffer.isBuffer(privateKey)).toBe(true)
@@ -102,6 +112,7 @@ describe('Mantle', () => {
       mantle1.loadMnemonic()
       mantle2.loadMnemonic()
 
+      expect(mantle1.address).not.toEqual(mantle2.address)
       expect(mantle1.mnemonic).not.toEqual(mantle2.mnemonic)
       expect(mantle1.hdPrivateKey).not.toEqual(mantle2.hdPrivateKey)
       expect(mantle1.hdPrivateKey).not.toEqual(mantle2.hdPrivateKey)
@@ -118,6 +129,7 @@ describe('Mantle', () => {
       mantle1.loadMnemonic(mnemonic)
       mantle2.loadMnemonic(mnemonic)
 
+      expect(mantle1.address).toEqual(mantle2.address)
       expect(mantle1.mnemonic).toEqual(mantle2.mnemonic)
       expect(mantle1.hdPrivateKey).toEqual(mantle2.hdPrivateKey)
       expect(mantle1.hdPrivateKey).toEqual(mantle2.hdPrivateKey)
@@ -138,8 +150,9 @@ describe('Mantle', () => {
       mantle.loadMnemonic()
       mantle.removeKeys()
 
-      const { mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
+      const { address, mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
 
+      expect(address).toBe(null)
       expect(mnemonic).toBe(null)
       expect(hdPrivateKey).toBe(null)
       expect(hdPublicKey).toBe(null)
@@ -157,22 +170,26 @@ describe('Mantle', () => {
     })
 
     test('connects to a block', async () => {
-      await ganache.listen(8545, async () => {
-        const mantle = new Mantle()
-        const blockNum = await mantle.connect()
-        expect(typeof blockNum === 'number').toBeTruthy()
-      })
-      ganache.close()
+      const mantle = new Mantle()
+      const blockNum = await mantle.connect()
+      expect(typeof blockNum === 'number').toBeTruthy()
     })
 
     test('throws an error on unsuccessful connection to a block', async () => {
+      // Close connection to Ganache server so that mantle connection attempt fails
+      await server.close()
       const mantle = new Mantle()
+
 
       try {
         await mantle.connect()
       } catch (err) {
         const error = new Error('Error: Invalid JSON RPC response: ""')
         expect(err).toEqual(error)
+      } finally {
+        // Rebuild the server for remaining tests
+        server = Ganache.server()
+        server.listen(8545)
       }
     })
 
