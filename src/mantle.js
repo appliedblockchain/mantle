@@ -4,6 +4,7 @@ const Web3 = require('web3')
 const Mnemonic = require('bitcore-mnemonic')
 const secp256k1 = require('secp256k1')
 const Config = require('./config')
+const IPFS = require('./ipfs')
 const errors = require('./errors')
 
 class Mantle {
@@ -16,6 +17,7 @@ class Mantle {
 
     this.contracts = {}
     this.keysLoaded = false
+    this.ipfs = new IPFS(this.config.ipfs)
 
     this.setupWeb3Provider()
     this.loadContracts(this.config.contracts)
