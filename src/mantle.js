@@ -81,7 +81,7 @@ class Mantle {
     this.web3 = web3
   }
 
-  createSharedSecret() {
+  static createSharedSecret() {
     const BYTE_LENGTH = 32
     return crypto.randomBytes(BYTE_LENGTH)
   }
@@ -108,7 +108,7 @@ class Mantle {
    * @param  {string} privateKey
    * @return {*}
    */
-  decrypt(data, privateKey) {
+  static decrypt(data, privateKey) {
     try {
       return BPrivacy.decrypt(data, privateKey)
     } catch (err) {
@@ -121,7 +121,7 @@ class Mantle {
    * @param  {byte} secret A 32 byte secret
    * @return {buffer} A 16 byte initialization vector followed by encrypted data
    */
-  encryptSymmetric(data, secret) {
+  static encryptSymmetric(data, secret) {
     try {
       return BPrivacy.encryptSymmetric(data, secret)
     } catch (err) {
@@ -134,7 +134,7 @@ class Mantle {
    * @param  {byte} secret A 32 byte secret
    * @return {*} A decrypted value
    */
-  decryptSymmetric(data, secret) {
+  static decryptSymmetric(data, secret) {
     try {
       return BPrivacy.decryptSymmetric(data, secret)
     } catch (err) {
@@ -267,7 +267,7 @@ class Mantle {
    * @param  {hex0x} ecSignature An ECDSA generated signature
    * @return {hex0x}
    */
-  recover(hash, ecSignature) {
+  static recover(hash, ecSignature) {
     // Convert hash and ecSignature to buffers to conform with secp256k1.recover required argument types
     const hashBuffer = Buffer.from(hash.slice(2), 'hex')
     if (hashBuffer.length !== 32) {
