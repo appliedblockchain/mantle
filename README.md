@@ -6,7 +6,7 @@ Mantle SDK repository
 
 `const mantle = new Mantle()`
 
-The mantle instance exposes methods to facilitate, amongst other things, asymmetric/symmetric encryption/decryption, mnemonic and HD public/private key generation etc.
+The mantle instance exposes methods to facilitate, amongst other things, mnemonic and HD public/private key generation, IPFS API access etc.
 
 ### Mnemonic generation
 
@@ -14,7 +14,7 @@ Mnemonic, HD private/public keys and private/public keys are generated via `load
 
 ### Symmetric encryption
 
-Facilitated via the `encryptSymmetric` and `decryptSymmetric` methods. Shared secrets can be generated via `createSharedSecret`.
+Facilitated via the `encryptSymmetric` and `decryptSymmetric` static methods. Shared secrets can be generated via `createSharedSecret`.
 
 # IPFS setup
 
@@ -50,20 +50,20 @@ mantle.loadMnemonic('tragic panic toast hazard royal marine visual laptop salmon
 ```js
 const data = 'foo'
 
-const encrypted = mantle.encrypt(data, mantle.publicKey) // Returns a buffer
+const encrypted = Mantle.encrypt(data, mantle.publicKey) // Returns a buffer
 
-const decrypted = mantle.decrypt(encrypted, mantle.privateKey) // 'foo'
+const decrypted = Mantle.decrypt(encrypted, mantle.privateKey) // 'foo'
 ```
 
 ### Symmetric encryption/decryption
 
 ```js
 const data = 'foo'
-const secret = mantle.createSharedSecret()
+const secret = Mantle.createSharedSecret()
 
-const encrypted = mantle.encryptSymmetric(data, secret) // Returns a Buffer
+const encrypted = Mantle.encryptSymmetric(data, secret) // Returns a Buffer
 
-const decrypted = mantle.decryptSymmetric(encrypted, secret) // 'foo'
+const decrypted = Mantle.decryptSymmetric(encrypted, secret) // 'foo'
 ```
 
 # Local testing

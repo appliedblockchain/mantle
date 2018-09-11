@@ -92,10 +92,10 @@ class Mantle {
    * @param  {string} publicKey
    * @return {buffer}
    */
-  encrypt(data, publicKey) {
+  static encrypt(data, publicKey) {
     try {
       // Generate private key
-      const privateKey = this.web3.eth.accounts.create().privateKey.toString()
+      const privateKey = new Web3().eth.accounts.create().privateKey.toString()
       return BPrivacy.encrypt(data, privateKey, publicKey)
     } catch (err) {
       throw new Error(err)
@@ -237,10 +237,11 @@ class Mantle {
    * - 32-byte scalar `s` (part of the ECDSA signature)
    * - A recovery id `v` used for public key recovery
    * @param  {hex0x} hash
+   * @param  {buffer} privateKey
    * @return {hex0x}
    */
-  sign(hash) {
-    if (!this.privateKey) {
+  static sign(hash, privateKey) {
+    if (!privateKey) {
       throw new Error('Cannot sign message: private key required')
     }
 
@@ -251,7 +252,7 @@ class Mantle {
     // Convert hash to buffer to conform with secp256k1.sign required argument types
     const hashBuffer = Buffer.from(hash.slice(2), 'hex')
 
-    const { signature, recovery } = secp256k1.sign(hashBuffer, this.privateKey)
+    const { signature, recovery } = secp256k1.sign(hashBuffer, privateKey)
 
     const RECOVERY_ID = 27
     const r = signature.slice(0, 32).toString('hex')

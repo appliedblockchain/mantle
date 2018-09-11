@@ -38,10 +38,9 @@ describe('Mantle', () => {
   describe('Signing', () => {
     test('throws an error when no private key exists', () => {
       const hash = Mantle.generateHash(data)
-      const mantle = new Mantle()
 
       expect(() => {
-        mantle.sign(hash)
+        Mantle.sign(hash)
       }).toThrow()
     })
 
@@ -51,7 +50,7 @@ describe('Mantle', () => {
 
       mantle.loadMnemonic()
       expect(() => {
-        mantle.sign(hash)
+        Mantle.sign(hash, mantle.privateKey)
       }).toThrow()
     })
 
@@ -60,7 +59,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = mantle.sign(hash)
+      const signature = Mantle.sign(hash, mantle.privateKey)
 
       expect(signature).toBeTruthy()
       expect(signature.startsWith('0x')).toBe(true)
@@ -73,7 +72,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = mantle.sign(hash)
+      const signature = Mantle.sign(hash, mantle.privateKey)
 
       const invalidHash = '@invalid_hash'
 
@@ -87,7 +86,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      mantle.sign(hash)
+      Mantle.sign(hash, mantle.privateKey)
 
       const invalidSignature = '@invalid_signature'
 
@@ -101,7 +100,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = mantle.sign(hash)
+      const signature = Mantle.sign(hash, mantle.privateKey)
       const publicKey = Mantle.recover(hash, signature)
 
       expect(publicKey).toEqual('0x' + mantle.publicKey.toString('hex'))
@@ -307,13 +306,13 @@ describe('Mantle', () => {
       })
 
       test('provides asymmetric encryption via encrypt()', () => {
-        const encryptedData = mantle.encrypt(data, publicKey).toString('hex')
+        const encryptedData = Mantle.encrypt(data, publicKey).toString('hex')
         expect(encryptedData).toHaveLength(236)
         expect(encryptedData.slice(0, 2)).toBe('04')
       })
 
       test('provides asymmetric decryption via decrypt()', () => {
-        const encryptedData = mantle.encrypt(data, publicKey).toString('hex')
+        const encryptedData = Mantle.encrypt(data, publicKey).toString('hex')
         expect(encryptedData).not.toEqual(data)
 
         const decryptedData = Mantle.decrypt(encryptedData, privateKey)
