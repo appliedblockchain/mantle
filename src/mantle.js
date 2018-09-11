@@ -6,7 +6,7 @@ const secp256k1 = require('secp256k1')
 const Config = require('./config')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
-const { bytesToBuffer } = require('./utils/conversions')
+const { bufferToOther, bytesToBuffer } = require('./utils/conversions')
 
 class Mantle {
   constructor(config) {
@@ -299,6 +299,22 @@ class Mantle {
       .toString('hex')
 
     return `0x${publicKey}`
+  }
+
+  /**
+   * @param  {string} format='buffer'
+   * @return {buffer|hex|hex0x}
+   */
+  getPublicKey(format = 'buffer') {
+    return bufferToOther(this.publicKey, format)
+  }
+
+  /**
+   * @param  {string} format='buffer'
+   * @return {buffer|hex|hex0x}
+   */
+  getPrivateKey(format = 'buffer') {
+    return bufferToOther(this.privateKey, format)
   }
 }
 
