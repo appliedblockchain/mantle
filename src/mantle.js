@@ -6,7 +6,7 @@ const secp256k1 = require('secp256k1')
 const Config = require('./config')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
-const { isHex0x } = require('./utils/typeChecks')
+const { bytesToBuffer } = require('./utils/conversions')
 
 class Mantle {
   constructor(config) {
@@ -236,7 +236,7 @@ class Mantle {
    * - 32-byte scalar `r` (part of the ECDSA signature)
    * - 32-byte scalar `s` (part of the ECDSA signature)
    * - A recovery id `v` used for public key recovery
-   * @param  {hex0x} hash
+   * @param  {byte} hash
    * @param  {buffer} privateKey
    * @return {hex0x}
    */
@@ -245,12 +245,8 @@ class Mantle {
       throw new Error('Cannot sign message: private key required')
     }
 
-    if (!isHex0x(hash)) {
-      throw new Error('Unexpected format for provided hash: expected hex0x format')
-    }
-
     // Convert hash to buffer to conform with secp256k1.sign required argument types
-    const hashBuffer = Buffer.from(hash.slice(2), 'hex')
+    const hashBuffer = bytesToBuffer(hash)
 
     const { signature, recovery } = secp256k1.sign(hashBuffer, privateKey)
 
