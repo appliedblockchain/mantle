@@ -38,6 +38,13 @@ class Mantle {
   }
 
   /**
+   * @return {string} A 12 word mnemonic
+   */
+  static generateMnemonic() {
+    return BPrivacy.generateMnemonicPhrase()
+  }
+
+  /**
    *
    * @param  {array} contracts
    * @return {void}

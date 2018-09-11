@@ -27,6 +27,12 @@ describe('Mantle', () => {
     }).toThrow(errors.invalidConfig())
   })
 
+  test('generates a mnemonic via generateMnemonc()', () => {
+    const mnemonic = Mantle.generateMnemonic()
+    expect(typeof mnemonic === 'string').toBe(true)
+    expect(mnemonic.split(' ').length).toEqual(12)
+  })
+
   describe('IPFS integration', () => {
     test('exposes an ipfs object on initialization', () => {
       const mantle = new Mantle()
