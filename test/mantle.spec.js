@@ -78,7 +78,7 @@ describe('Mantle', () => {
       const invalidHash = '@invalid_hash'
 
       expect(() => {
-        mantle.recover(invalidHash, signature)
+        Mantle.recover(invalidHash, signature)
       }).toThrow()
     })
 
@@ -92,7 +92,7 @@ describe('Mantle', () => {
       const invalidSignature = '@invalid_signature'
 
       expect(() => {
-        mantle.recover(hash, invalidSignature)
+        Mantle.recover(hash, invalidSignature)
       }).toThrow()
     })
 
@@ -102,7 +102,7 @@ describe('Mantle', () => {
 
       mantle.loadMnemonic()
       const signature = mantle.sign(hash)
-      const publicKey = mantle.recover(hash, signature)
+      const publicKey = Mantle.recover(hash, signature)
 
       expect(publicKey).toEqual('0x' + mantle.publicKey.toString('hex'))
     })
@@ -316,7 +316,7 @@ describe('Mantle', () => {
         const encryptedData = mantle.encrypt(data, publicKey).toString('hex')
         expect(encryptedData).not.toEqual(data)
 
-        const decryptedData = mantle.decrypt(encryptedData, privateKey)
+        const decryptedData = Mantle.decrypt(encryptedData, privateKey)
         expect(decryptedData).toEqual(data)
       })
     })
@@ -325,19 +325,19 @@ describe('Mantle', () => {
       let secret
 
       beforeAll(() => {
-        secret = mantle.createSharedSecret()
+        secret = Mantle.createSharedSecret()
       })
 
       test('provides symmetric encryption via encryptSymmetric()', () => {
-        const encryptedData = mantle.encryptSymmetric(data, secret)
+        const encryptedData = Mantle.encryptSymmetric(data, secret)
 
         expect(Buffer.isBuffer(encryptedData)).toBe(true)
         expect(encryptedData.toString()).not.toEqual(data)
       })
 
       test('provides symmetric decryption via decryptSymmetric()', () => {
-        const encryptedData = mantle.encryptSymmetric(data, secret)
-        const decryptedData = mantle.decryptSymmetric(encryptedData, secret)
+        const encryptedData = Mantle.encryptSymmetric(data, secret)
+        const decryptedData = Mantle.decryptSymmetric(encryptedData, secret)
         expect(decryptedData).toEqual(data)
       })
     })
