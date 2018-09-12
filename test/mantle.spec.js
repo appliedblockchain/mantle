@@ -5,6 +5,7 @@ const errors = require('../src/errors')
 const secp256k1 = require('secp256k1')
 const Mnemonic = require('bitcore-mnemonic')
 const { fromAscii } = require('web3-utils')
+const { isHex, isHex0x } = require('../src/utils/typeChecks')
 const Ganache = require('ganache-core')
 const ethUtils = require('ethereumjs-util')
 
@@ -31,6 +32,19 @@ describe('Mantle', () => {
     const mnemonic = Mantle.generateMnemonic()
     expect(typeof mnemonic === 'string').toBe(true)
     expect(mnemonic.split(' ').length).toEqual(12)
+  })
+
+  test('provides public/private keys in formats other than buffer', () => {
+    const mantle = new Mantle()
+    mantle.loadMnemonic()
+
+    expect(Buffer.isBuffer(mantle.getPublicKey())).toBe(true)
+    expect(isHex(mantle.getPublicKey('hex'))).toBe(true)
+    expect(isHex0x(mantle.getPublicKey('hex0x'))).toBe(true)
+
+    expect(Buffer.isBuffer(mantle.getPrivateKey())).toBe(true)
+    expect(isHex(mantle.getPrivateKey('hex'))).toBe(true)
+    expect(isHex0x(mantle.getPrivateKey('hex0x'))).toBe(true)
   })
 
   describe('IPFS integration', () => {
