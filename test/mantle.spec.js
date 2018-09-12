@@ -4,6 +4,7 @@ const defaults = require('../src/defaults')
 const errors = require('../src/errors')
 const secp256k1 = require('secp256k1')
 const Mnemonic = require('bitcore-mnemonic')
+const crypto = require('crypto')
 const { fromAscii } = require('web3-utils')
 const Ganache = require('ganache-core')
 const ethUtils = require('ethereumjs-util')
@@ -69,6 +70,34 @@ describe('Mantle', () => {
 
       expect(signature).toBeTruthy()
       expect(signature.startsWith('0x')).toBe(true)
+    })
+
+    test('generates a hash and message signature via createSignature()', () => {
+      const mantle = new Mantle()
+      mantle.loadMnemonic()
+
+      // The signature should be the same when supplied with the same arguments
+      const nonce = crypto.randomBytes(16)
+      const signature1 = Mantle.createSignature(mantle.privateKey, [ 'arg1', 'arg2', nonce ])
+      const signature2 = Mantle.createSignature(mantle.privateKey, [ 'arg1', 'arg2', nonce ])
+
+      expect(signature1).toEqual(signature2)
+      expect(signature1).toBeTruthy()
+      expect(signature1.startsWith('0x')).toBe(true)
+    })
+
+    test('throws an error when trying to create a signature with invalid arguments', () => {
+      const mantle = new Mantle()
+      mantle.loadMnemonic()
+
+      expect(() => {
+        Mantle.createSignature()
+      }).toThrow()
+
+      const nonce = crypto.randomBytes(16)
+      expect(() => {
+        Mantle.createSignature(mantle.privateKey, nonce)
+      }).toThrow()
     })
   })
 

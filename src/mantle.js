@@ -29,7 +29,7 @@ class Mantle {
   }
 
   /**
-   * Generates a hash from a list of values
+   * Generates a hash from a list of `args`
    * @param  {*} ...args
    * @return {hex0x}
    */
@@ -299,6 +299,28 @@ class Mantle {
       .toString('hex')
 
     return `0x${publicKey}`
+  }
+
+  /**
+   * Creates a signature from an array of hash arguments and a supplied private key.
+   * It is recommended to provide a nonce as part of the argument list in
+   * order to avoid replay attacks
+   * @param  {buffer} privateKey
+   * @param  {array} hashArgs
+   * @return {hex0x}
+   */
+  static createSignature(privateKey, hashArgs) {
+    if (!privateKey) {
+      throw new Error('Cannot create signature: private key required')
+    }
+
+    if (!Array.isArray(hashArgs)) {
+      throw new Error(`Expected array: received ${typeof hashArgs}`)
+    }
+
+    const hash = Mantle.generateHash(...hashArgs)
+    const signature = Mantle.sign(hash, privateKey)
+    return signature
   }
 }
 
