@@ -125,6 +125,17 @@ describe('Mantle', () => {
 
       expect(publicKey).toEqual('0x' + mantle.publicKey.toString('hex'))
     })
+
+    test('recovers the address for an account that signed some data, via recoverAddress()', () => {
+      const mantle = new Mantle()
+      mantle.loadMnemonic()
+      const hash = Mantle.generateHash(data)
+
+      const signature = Mantle.sign(hash, mantle.privateKey)
+      const address = Mantle.recoverAddress(hash, signature)
+
+      expect(address).toEqual(mantle.address)
+    })
   })
 
   describe('Contract', () => {
