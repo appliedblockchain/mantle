@@ -20,6 +20,25 @@ function bytesToBuffer(value) {
   throw new Error('Expected byte representation (buffer, hex0x or hex): could not convert provided type')
 }
 
+/**
+ * @param  {buffer} buffer
+ * @param  {string} format='buffer'
+ * @return {buffer|hex|hex0x}
+ */
+function bufferToOther(buffer, format = 'buffer') {
+  switch (format) {
+    case 'buffer':
+      return buffer
+    case 'hex':
+      return buffer.toString('hex')
+    case 'hex0x':
+      return '0x' + buffer.toString('hex')
+    default:
+      throw new Error(`Unknown ${format} format, expected "buffer", "hex0x" or "hex".`)
+  }
+}
+
 module.exports = {
+  bufferToOther,
   bytesToBuffer
 }
