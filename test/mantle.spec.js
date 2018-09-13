@@ -4,10 +4,9 @@ const defaults = require('../src/defaults')
 const errors = require('../src/errors')
 const secp256k1 = require('secp256k1')
 const Mnemonic = require('bitcore-mnemonic')
-const { fromAscii } = require('web3-utils')
+const { fromAscii, checkAddressChecksum } = require('web3-utils')
 const { isHex, isHex0x } = require('../src/utils/typeChecks')
 const Ganache = require('ganache-core')
-const ethUtils = require('ethereumjs-util')
 
 describe('Mantle', () => {
   let server, data
@@ -202,7 +201,8 @@ describe('Mantle', () => {
 
       expect(typeof address === 'string').toBe(true)
       expect(address.startsWith('0x')).toBe(true)
-      expect(ethUtils.isValidChecksumAddress(address)).toBe(true)
+
+      expect(checkAddressChecksum(address)).toBe(true)
       expect(typeof mnemonic === 'string').toBe(true)
       expect(mnemonic.split(' ').length).toEqual(12)
       expect(Buffer.isBuffer(privateKey)).toBe(true)
