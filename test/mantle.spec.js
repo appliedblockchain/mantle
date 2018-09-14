@@ -344,7 +344,7 @@ describe('Mantle', () => {
       let secret
 
       beforeAll(() => {
-        secret = Mantle.createSharedSecret()
+        secret = Mantle.createSymmetricKey()
       })
 
       test('provides symmetric encryption via encryptSymmetric()', () => {

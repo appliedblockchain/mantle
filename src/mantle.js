@@ -88,7 +88,11 @@ class Mantle {
     this.web3 = web3
   }
 
-  static createSharedSecret() {
+  /**
+   * Create a key used for symmetric encryption/decryption
+   * @return {buffer} A 32 byte buffer
+   */
+  static createSymmetricKey() {
     const BYTE_LENGTH = 32
     return crypto.randomBytes(BYTE_LENGTH)
   }
@@ -226,6 +230,10 @@ class Mantle {
     return secp256k1.publicKeyCreate(this.privateKey, false).slice(1)
   }
 
+  /**
+   * Reset keys associated with the mantle instance
+   * @return {void}
+   */
   removeKeys() {
     this.address = null
     this.mnemonic = null

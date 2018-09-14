@@ -14,7 +14,7 @@ Mnemonic, HD private/public keys and private/public keys are generated via `load
 
 ### Symmetric encryption
 
-Facilitated via the `encryptSymmetric` and `decryptSymmetric` static methods. Shared secrets can be generated via `createSharedSecret`.
+Facilitated via the `encryptSymmetric` and `decryptSymmetric` static methods. Shared secrets can be generated via `createSymmetricKey`.
 
 # IPFS setup
 
@@ -59,7 +59,7 @@ const decrypted = Mantle.decrypt(encrypted, mantle.privateKey) // 'foo'
 
 ```js
 const data = 'foo'
-const secret = Mantle.createSharedSecret()
+const secret = Mantle.createSymmetricKey()
 
 const encrypted = Mantle.encryptSymmetric(data, secret) // Returns a Buffer
 
