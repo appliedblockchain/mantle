@@ -63,22 +63,20 @@ describe('Mantle', () => {
       }).toThrow()
     })
 
-    test('throws an error when providing an invalid hash', () => {
-      const hash = '@invalid_hash'
+    test('throws an error when providing an invalid message', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
       expect(() => {
-        Mantle.sign(hash, mantle.privateKey)
+        Mantle.sign(null, mantle.privateKey)
       }).toThrow()
     })
 
     test('generates a message signature via sign()', () => {
-      const hash = Mantle.generateHash(data)
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = Mantle.sign(hash, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.privateKey)
 
       expect(signature).toBeTruthy()
       expect(signature.startsWith('0x')).toBe(true)
@@ -87,11 +85,10 @@ describe('Mantle', () => {
 
   describe('Recovery', () => {
     test('throws an error when providing an invalid hash', () => {
-      const hash = Mantle.generateHash(data)
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = Mantle.sign(hash, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.privateKey)
 
       const invalidHash = '@invalid_hash'
 
@@ -105,7 +102,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      Mantle.sign(hash, mantle.privateKey)
+      Mantle.sign(data, mantle.privateKey)
 
       const invalidSignature = '@invalid_signature'
 
@@ -119,7 +116,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = Mantle.sign(hash, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.privateKey)
       const publicKey = Mantle.recover(hash, signature)
 
       expect(publicKey).toEqual('0x' + mantle.publicKey.toString('hex'))

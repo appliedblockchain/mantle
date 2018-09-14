@@ -29,12 +29,12 @@ class Mantle {
   }
 
   /**
-   * Generates a hash from a list of values
-   * @param  {*} ...args
+   * Generates a hash from the given string
+   * @param  {string} message
    * @return {hex0x}
    */
-  static generateHash(...args) {
-    return BPrivacy.callHash(...args)
+  static generateHash(message) {
+    return BPrivacy.callHash(message)
   }
 
   /**
@@ -251,15 +251,16 @@ class Mantle {
    * - 32-byte scalar `r` (part of the ECDSA signature)
    * - 32-byte scalar `s` (part of the ECDSA signature)
    * - A recovery id `v` used for public key recovery
-   * @param  {byte} hash
+   * @param  {string} message
    * @param  {buffer} privateKey
    * @return {hex0x}
    */
-  static sign(hash, privateKey) {
+  static sign(message, privateKey) {
     if (!privateKey) {
       throw new Error('Cannot sign message: private key required')
     }
 
+    const hash = Mantle.generateHash(message)
     // Convert hash to buffer to conform with secp256k1.sign required argument types
     const hashBuffer = bytesToBuffer(hash)
 
