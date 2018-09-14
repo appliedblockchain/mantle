@@ -127,7 +127,7 @@ describe('Mantle', () => {
       mantle.loadMnemonic()
       const hash = Mantle.generateHash(data)
 
-      const signature = Mantle.sign(hash, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.privateKey)
       const address = Mantle.recoverAddress(hash, signature)
 
       expect(address).toEqual(mantle.address)
