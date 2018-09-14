@@ -188,8 +188,8 @@ class Mantle {
       throw new Error('Cannot derive an ethereum address: no private key exists')
     }
 
-    // Create a checksum address
-    const { address } = this.web3.eth.accounts.privateKeyToAccount(this.privateKey)
+    const privateKey = bufferToOther(this.privateKey, 'hex0x')
+    const { address } = this.web3.eth.accounts.privateKeyToAccount(privateKey)
     return address
   }
 
@@ -323,6 +323,12 @@ class Mantle {
    */
   getPrivateKey(format = 'buffer') {
     return bufferToOther(this.privateKey, format)
+  }
+
+  static recoverAddress(hash, ecSignature) {
+    const publicKey = Mantle.recover(hash, ecSignature)
+    const address = BPrivacy.publicKeyToAddress(publicKey)
+    return address
   }
 }
 
