@@ -22,6 +22,12 @@ describe('Mantle', () => {
     await server.close()
   })
 
+  test.skip('send signing tx', async () => {
+    const mantle = new Mantle()
+    mantle.loadMnemonic()
+    await mantle.signAndSendTransaction()
+  })
+
   test('throws an error if no configuration is provided', () => {
     expect(() => {
       new Mantle(null)

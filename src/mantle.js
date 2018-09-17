@@ -8,6 +8,7 @@ const Contract = require('./contract')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
 const utils = require('./utils')
+const axios = require('axios')
 
 /**
  * @class Mantle
@@ -26,6 +27,22 @@ class Mantle {
 
     this.setupWeb3Provider()
     this.loadContracts(this.config.contracts)
+
+    this.axios = axios.create({
+      baseURL: process.env.API_HOST || 'http://localhost:3000/api',
+      timeout: 5000
+    })
+  }
+
+  async signAndSendTransaction(txParams) {
+    txParams = {
+      gasPrice: '0',
+      gas: '50000000',
+      ...txParams
+    }
+
+    const { rawTransaction } = await this.web3.eth.accounts.signTransaction(txParams, this.getPrivateKey('hex0x'))
+    await this.axios.post('/tx', { rawTransaction, address: this.address })
   }
 
   /**
