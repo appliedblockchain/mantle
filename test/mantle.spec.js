@@ -85,7 +85,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = Mantle.sign(data, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.sigPrivateKey)
 
       expect(signature).toBeTruthy()
       expect(signature.startsWith('0x')).toBe(true)
@@ -97,7 +97,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = Mantle.sign(data, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.sigPrivateKey)
 
       const invalidHash = '@invalid_hash'
 
@@ -125,10 +125,10 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = Mantle.sign(data, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.sigPrivateKey)
       const publicKey = Mantle.recover(hash, signature)
 
-      expect(publicKey).toEqual('0x' + mantle.publicKey.toString('hex'))
+      expect(publicKey).toEqual(mantle.getSigPublicKey('hex0x'))
     })
 
     test('recovers the address for an account that signed some data, via recoverAddress()', () => {
@@ -136,10 +136,10 @@ describe('Mantle', () => {
       mantle.loadMnemonic()
       const hash = Mantle.generateHash(data)
 
-      const signature = Mantle.sign(data, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.sigPrivateKey)
       const address = Mantle.recoverAddress(hash, signature)
 
-      expect(address).toEqual(mantle.address)
+      expect(address).toEqual(mantle.sigAddress)
     })
   })
 

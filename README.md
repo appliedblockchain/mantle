@@ -52,7 +52,7 @@ const data = 'foo'
 
 const encrypted = Mantle.encrypt(data, mantle.publicKey) // Returns a buffer
 
-const decrypted = Mantle.decrypt(encrypted, mantle.privateKey) // 'foo'
+const decrypted = Mantle.decrypt(encrypted, mantle.privateKey) || mantle.decrypt(encrypted) // 'foo'
 ```
 
 ### Symmetric encryption/decryption
