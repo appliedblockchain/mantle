@@ -6,7 +6,7 @@ const secp256k1 = require('secp256k1')
 const Config = require('./config')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
-const { bufferToOther, bytesToBuffer } = require('./utils/conversions')
+const utils = require('./utils')
 
 class Mantle {
   constructor(config) {
@@ -114,6 +114,15 @@ class Mantle {
   }
 
   /**
+   * Data decryption using instance's private key
+   * @param  {Object|string} data
+   * @return {*}
+   */
+  decrypt(data) {
+    return BPrivacy.decrypt(data, this.privateKey)
+  }
+
+  /**
    * Data decryption using private key
    * @param  {Object|string} data
    * @param  {string} privateKey
@@ -188,7 +197,7 @@ class Mantle {
       throw new Error('Cannot derive an ethereum address: no private key exists')
     }
 
-    const privateKey = bufferToOther(this.privateKey, 'hex0x')
+    const privateKey = utils.bufferToOther(this.privateKey, 'hex0x')
     const { address } = this.web3.eth.accounts.privateKeyToAccount(privateKey)
     return address
   }
@@ -262,7 +271,7 @@ class Mantle {
 
     const hash = Mantle.generateHash(message)
     // Convert hash to buffer to conform with secp256k1.sign required argument types
-    const hashBuffer = bytesToBuffer(hash)
+    const hashBuffer = utils.bytesToBuffer(hash)
 
     const { signature, recovery } = secp256k1.sign(hashBuffer, privateKey)
 
@@ -315,7 +324,7 @@ class Mantle {
    * @return {buffer|hex|hex0x}
    */
   getPublicKey(format = 'buffer') {
-    return bufferToOther(this.publicKey, format)
+    return utils.bufferToOther(this.publicKey, format)
   }
 
   /**
@@ -323,13 +332,17 @@ class Mantle {
    * @return {buffer|hex|hex0x}
    */
   getPrivateKey(format = 'buffer') {
-    return bufferToOther(this.privateKey, format)
+    return utils.bufferToOther(this.privateKey, format)
   }
 
   static recoverAddress(hash, ecSignature) {
     const publicKey = Mantle.recover(hash, ecSignature)
     const address = BPrivacy.publicKeyToAddress(publicKey)
     return address
+  }
+
+  static get utils() {
+    return utils
   }
 }
 

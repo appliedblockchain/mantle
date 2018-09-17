@@ -339,11 +339,20 @@ describe('Mantle', () => {
         expect(encryptedData.slice(0, 2)).toBe('04')
       })
 
-      test('provides asymmetric decryption via decrypt()', () => {
+      test('provides asymmetric decryption on the class via decrypt()', () => {
         const encryptedData = Mantle.encrypt(data, publicKey).toString('hex')
         expect(encryptedData).not.toEqual(data)
 
         const decryptedData = Mantle.decrypt(encryptedData, privateKey)
+        expect(decryptedData).toEqual(data)
+      })
+
+      test('provides asymmetric decryption on the instance via decrypt()', () => {
+        mantle.loadMnemonic()
+        const encryptedData = Mantle.encrypt(data, mantle.publicKey).toString('hex')
+        expect(encryptedData).not.toEqual(data)
+
+        const decryptedData = mantle.decrypt(encryptedData)
         expect(decryptedData).toEqual(data)
       })
     })
@@ -366,6 +375,12 @@ describe('Mantle', () => {
         const encryptedData = Mantle.encryptSymmetric(data, secret)
         const decryptedData = Mantle.decryptSymmetric(encryptedData, secret)
         expect(decryptedData).toEqual(data)
+      })
+    })
+
+    describe('utils', () => {
+      test('exposes a utility object on the class', () => {
+        expect(typeof Mantle.utils === 'object').toBe(true)
       })
     })
   })
