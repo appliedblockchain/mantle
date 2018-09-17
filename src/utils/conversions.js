@@ -38,7 +38,25 @@ function bufferToOther(buffer, format = 'buffer') {
   }
 }
 
+/**
+ * @param  {buffer} data
+ * @return {hex}
+ */
+function bufferToHex(data) {
+  return bufferToOther(data, 'hex')
+}
+
+/**
+ * @param  {buffer} data
+ * @return {hex0x}
+ */
+function bufferToHex0x(data) {
+  return bufferToOther(data, 'hex0x')
+}
+
 module.exports = {
   bufferToOther,
+  bufferToHex,
+  bufferToHex0x,
   bytesToBuffer
 }

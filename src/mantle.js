@@ -197,7 +197,7 @@ class Mantle {
       throw new Error('Cannot derive an ethereum address: no private key exists')
     }
 
-    const privateKey = utils.bufferToOther(this.privateKey, 'hex0x')
+    const privateKey = utils.bufferToHex0x(this.privateKey)
     const { address } = this.web3.eth.accounts.privateKeyToAccount(privateKey)
     return address
   }
