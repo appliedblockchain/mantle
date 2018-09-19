@@ -3,6 +3,9 @@ const { isAddress } = require('web3-utils')
 const errors = require('./errors')
 const defaults = require('./defaults')
 
+/**
+ * @class Config
+ */
 class Config {
   constructor(config = defaults) {
     if (!isObject(config)) {
@@ -11,7 +14,7 @@ class Config {
 
     // Override default properties
     config = Object.assign({}, defaults, config)
-    this.validateConfig(config)
+    this._validateConfig(config)
 
     Object.assign(this, config)
   }
@@ -20,16 +23,16 @@ class Config {
    * @param  {Object} config
    * @return {void}
    */
-  validateConfig(config) {
-    this.validateBlockchain(config.blockchain)
-    this.validateContracts(config.contracts)
+  _validateConfig(config) {
+    this._validateBlockchain(config.blockchain)
+    this._validateContracts(config.contracts)
   }
 
   /**
    * @param  {string} blockchain
    * @return {void}
    */
-  validateBlockchain(blockchain) {
+  _validateBlockchain(blockchain) {
     if (blockchain.toLowerCase() !== 'ethereum') {
       throw errors.invalidBlockchain()
     }
@@ -41,7 +44,7 @@ class Config {
    * @param  {Object} contracts
    * @return {void}
    */
-  validateContracts(contracts) {
+  _validateContracts(contracts) {
     contracts.forEach(({ name, abi, address }) => {
       if (!name) {
         throw errors.noContractName()

@@ -9,6 +9,9 @@ const IPFS = require('./ipfs')
 const errors = require('./errors')
 const utils = require('./utils')
 
+/**
+ * @class Mantle
+ */
 class Mantle {
   constructor(config) {
     try {
@@ -25,6 +28,9 @@ class Mantle {
     this.loadContracts(this.config.contracts)
   }
 
+  /**
+   * @return {Web3}
+   */
   static get Web3() {
     return Web3
   }
@@ -46,7 +52,6 @@ class Mantle {
   }
 
   /**
-   *
    * @param  {array} contracts
    * @return {void}
    */
@@ -69,10 +74,16 @@ class Mantle {
     return this.contracts[contract.name]
   }
 
+  /**
+   * @return {Web3}
+   */
   get Web3() {
     return Web3
   }
 
+  /**
+   * @return {number}
+   */
   async connect() {
     try {
       const blockNum = await this.web3.eth.getBlockNumber()
@@ -82,6 +93,9 @@ class Mantle {
     }
   }
 
+  /**
+   * @return {void}
+   */
   setupWeb3Provider() {
     const web3 = new Web3(this.config.provider)
     this.web3 = web3

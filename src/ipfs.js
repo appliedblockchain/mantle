@@ -1,5 +1,8 @@
 const ipfsAPI = require('ipfs-api')
 
+/**
+ * @class IPFS
+ */
 class IPFS {
   constructor(config) {
     const ipfs = ipfsAPI(config)
