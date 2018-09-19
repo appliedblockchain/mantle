@@ -263,6 +263,7 @@ describe('Mantle', () => {
       expect(mantle.encAddress).toBe(null)
       expect(mantle.encPublicKey).toBe(null)
       expect(mantle.encPrivateKey).toBe(null)
+      expect(mantle.encHdPrivateKey).toBe(null)
       expect(mantle.sigAddress).toBe(null)
       expect(mantle.sigPublicKey).toBe(null)
       expect(mantle.sigPrivateKey).toBe(null)

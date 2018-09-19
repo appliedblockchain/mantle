@@ -201,7 +201,7 @@ class Mantle {
     const encPrivateKey = this.getEncPrivateKey('hex0x')
     const sigPrivateKey = this.getSigPrivateKey('hex0x')
 
-    this.address = this.web3.eth.accounts.privateKeyToAccount(encPrivateKey).address
+    this.encAddress = this.web3.eth.accounts.privateKeyToAccount(encPrivateKey).address
     this.sigAddress = this.web3.eth.accounts.privateKeyToAccount(sigPrivateKey).address
   }
 
@@ -224,15 +224,15 @@ class Mantle {
     const SIG_PATH_LEVEL = `${PURPOSE}'/${COIN_TYPE}'/${SIG_ACCOUNT}'/${CHANGE}`
 
     // Private key derivation reference: https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
-    const encDerivation = this.hdPrivateKey.derive(`m/${ENC_PATH_LEVEL}/${index}`)
-    const sigDerivation = this.hdPrivateKey.derive(`m/${SIG_PATH_LEVEL}/${index}`)
+    this.encHdPrivateKey = this.hdPrivateKey.derive(`m/${ENC_PATH_LEVEL}/${index}`)
+    this.sigHdPrivateKey = this.hdPrivateKey.derive(`m/${SIG_PATH_LEVEL}/${index + 1}`)
 
     // Includes big number(BN) and network
-    const encPrivateKey = encDerivation.privateKey
-    const sigPrivateKey = sigDerivation.privateKey
+    const encPrivateKey = this.encHdPrivateKey.privateKey
+    const sigPrivateKey = this.sigHdPrivateKey.privateKey
 
     // Access the big number(BN) and convert to a Buffer - this serves as our private key
-    this.privateKey = encPrivateKey.bn.toBuffer({ size: 32 })
+    this.encPrivateKey = encPrivateKey.bn.toBuffer({ size: 32 })
     this.sigPrivateKey = sigPrivateKey.bn.toBuffer({ size: 32 })
   }
 
@@ -245,7 +245,7 @@ class Mantle {
       throw new Error('Cannot derive a public key: no private key exists')
     }
 
-    this.publicKey = secp256k1.publicKeyCreate(this.encPrivateKey, false).slice(1),
+    this.encPublicKey = secp256k1.publicKeyCreate(this.encPrivateKey, false).slice(1),
     this.sigPublicKey = secp256k1.publicKeyCreate(this.sigPrivateKey, false).slice(1)
   }
 
@@ -254,15 +254,21 @@ class Mantle {
    * @return {void}
    */
   removeKeys() {
-    this.address = null
     this.mnemonic = null
+
     this.hdPrivateKey = null
     this.hdPublicKey = null
-    this.privateKey = null
+
+    this.encHdPrivateKey = null
+    this.encAddress = null
+    this.encPrivateKey = null
+    this.encPublicKey = null
+
+    this.sigHdPrivateKey = null
     this.sigPrivateKey = null
-    this.publicKey = null
     this.sigPublicKey = null
     this.sigAddress = null
+
     this.keysLoaded = false
   }
 
@@ -402,36 +408,22 @@ class Mantle {
   /**
    * @return {hex0x}
    */
-  get encAddress() {
-    return this.address
+  get address() {
+    return this.encAddress
   }
 
   /**
    * @return {buffer}
    */
-  get encPrivateKey() {
-    return this.privateKey
+  get privateKey() {
+    return this.encPrivateKey
   }
 
   /**
    * @return {buffer}
    */
-  get encPublicKey() {
-    return this.publicKey
-  }
-
-  /**
-   * @return {HDPrivateKey}
-   */
-  get encHdPrivateKey() {
-    return this.hdPrivateKey
-  }
-
-  /**
-   * @return {HDPublicKey}
-   */
-  get encHdPublicKey() {
-    return this.hdPublicKey
+  get publicKey() {
+    return this.encPublicKey
   }
 }
 
