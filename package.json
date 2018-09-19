@@ -22,13 +22,13 @@
   "dependencies": {
     "@appliedblockchain/b-privacy": "^1.2.0",
     "bitcore-mnemonic": "^1.5.0",
-    "ganache-core": "^2.2.1",
     "ipfs-api": "^24.0.1",
     "web3": "1.0.0-beta.33"
   },
   "devDependencies": {
     "@appliedblockchain/eslint-config": "^2.3.0",
     "eslint": "^5.4.0",
+    "ganache-core": "^2.2.1",
     "jest": "^23.5.0",
     "secp256k1": "^3.5.2"
   }
