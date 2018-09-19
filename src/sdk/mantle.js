@@ -9,6 +9,7 @@ const IPFS = require('./ipfs')
 const errors = require('./errors')
 const utils = require('./utils')
 const axios = require('axios')
+const abiDecoder = require('abi-decoder')
 
 /**
  * @class Mantle
@@ -42,7 +43,8 @@ class Mantle {
     }
 
     const { rawTransaction } = await this.web3.eth.accounts.signTransaction(txParams, this.getPrivateKey('hex0x'))
-    await this.axios.post('/tx', { rawTransaction, address: this.address })
+    const { data: receipt } = await this.axios.post('/tx', { rawTransaction, address: this.address })
+    return abiDecoder.decodeLogs(receipt.logs)
   }
 
   /**

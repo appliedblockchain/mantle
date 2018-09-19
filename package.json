@@ -22,6 +22,7 @@
   "dependencies": {
     "@appliedblockchain/b-privacy": "^1.2.0",
     "@koa/cors": "^2.2.2",
+    "abi-decoder": "^1.2.0",
     "axios": "^0.18.0",
     "bitcore-mnemonic": "^1.5.0",
     "ipfs-api": "^24.0.1",
