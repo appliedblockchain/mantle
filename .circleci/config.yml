@@ -19,6 +19,12 @@ jobs:
       - checkout
 
       - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
+
+      - run:
           name: Authorize NPM
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
 
@@ -41,6 +47,27 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
           paths:
             - node_modules
+    
+      - setup_remote_docker
+      - run: docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
       
-      # Run ipfs daemon for ipfs API access and run tests
-      - run: ipfs daemon & yarn test
+    # Run ipfs daemon for ipfs API access and run tests
+      - run:
+          name: ipfs daemon
+          command: ipfs daemon
+          background: true
+
+      - run:
+          name: parity
+          command: npm run parity
+          background: true
+
+      - run:
+          name: api server
+          command: npm run deploy
+          background: true
+
+      - run: dockerize -wait tcp://localhost:3000 -timeout 20s
+      - run: sleep 20
+      - run: docker ps
+      - run: npm test
