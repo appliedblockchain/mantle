@@ -1,12 +1,11 @@
-const Contract = require('../src/contract')
-const Mantle = require('../src/mantle')
-const IPFS = require('../src/ipfs')
-const defaults = require('../src/defaults')
-const errors = require('../src/errors')
+const Mantle = require('../../src/sdk/mantle')
+const IPFS = require('../../src/sdk/ipfs')
+const defaults = require('../../src/sdk/defaults')
+const errors = require('../../src/sdk/errors')
 const secp256k1 = require('secp256k1')
 const Mnemonic = require('bitcore-mnemonic')
 const { checkAddressChecksum } = require('web3-utils')
-const { isHex, isHex0x } = require('../src/utils/typeChecks')
+const { isHex, isHex0x } = require('../../src/sdk/utils/typeChecks')
 const Ganache = require('ganache-core')
 
 describe('Mantle', () => {

@@ -1,5 +1,5 @@
-const IPFS = require('../src/ipfs')
-const defaults = require('../src/defaults')
+const IPFS = require('../../src/sdk/ipfs')
+const defaults = require('../../src/sdk/defaults')
 
 describe('IPFS', () => {
   let data, ipfs
