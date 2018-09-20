@@ -73,7 +73,7 @@ const decrypted = Mantle.decryptSymmetric(encrypted, secret) // 'foo'
 - Run the IPFS daemon: `ipfs daemon`
 - Load parity-solo and the api server to handle proxied requests: 
     - `npm run parity`
-    - `npm run deploy`
+    - `npm run start`
 - Run test suite: `npm test`
 
 # Documentation
