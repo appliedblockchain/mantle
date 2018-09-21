@@ -10,7 +10,7 @@ class Config {
     }
 
     // Override default properties
-    config = { ...defaults, ...config }
+    config = Object.assign({}, defaults, config)
     this.validateConfig(config)
 
     Object.assign(this, config)
