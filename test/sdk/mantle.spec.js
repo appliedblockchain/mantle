@@ -15,9 +15,30 @@ describe('Mantle', () => {
   })
 
   test('signs and sends a transaction', async () => {
+    const contractName = 'TestContract'
+    const contract = {
+      id: contractName,
+      abi: [ {
+        'type': 'function',
+        'inputs': [ { 'name': 'a', 'type': 'uint256' } ],
+        'name': 'foo',
+        'outputs': []
+      } ],
+      options: {
+        address: '0x0x571e8a7ed290a45cf4f3dabdeb8674b000e0a4'
+      }
+    }
+
     const mantle = new Mantle()
     mantle.loadMnemonic()
-    const logs = await mantle.signAndSendTransaction()
+    mantle.loadContract(contract)
+
+    const logs = await mantle.signAndSendTransaction({
+      contractName,
+      methodName: 'foo',
+      params: [ 1 ]
+    })
+
     expect(logs.constructor).toBe(Array)
   })
 

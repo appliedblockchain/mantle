@@ -30,19 +30,44 @@ class Mantle {
     this.loadContracts(this.config.contracts)
 
     this.axios = axios.create({
-      baseURL: process.env.API_HOST || 'http://localhost:3000/api',
+      baseURL: this.config.proxyURL,
       timeout: 5000
     })
   }
 
-  async signAndSendTransaction(txParams) {
-    txParams = {
-      gasPrice: '0',
-      gas: '50000000',
-      ...txParams
+  /**
+   * @param  {object} options
+   * @param  {string} options.contractName
+   * @param  {string} options.methodName
+   * @param  {array}  options.params
+   * @param  {string} [options.nonce]
+   * @param  {string} [options.chainId]
+   * @return {array}
+   */
+  async signAndSendTransaction(options) {
+    if (!this.keysLoaded) {
+      throw new Error('Cannot sign and send transaction: account has not been loaded')
     }
 
-    const { rawTransaction } = await this.web3.eth.accounts.signTransaction(txParams, this.getPrivateKey('hex0x'))
+    const contract = this.contracts[options.contractName]
+    if (!contract) {
+      throw new Error(`Cannot sign and send transaction: no contract exists with name ${options.contractName}`)
+    }
+
+    if (!contract.methods[options.methodName]) {
+      throw new Error(`Cannot sign and send transaction: no method ${options.methodName} exists for contract ${options.contractName}`)
+    }
+
+    const tx = {
+      gasPrice: '0',
+      gas: '50000000',
+      nonce: options.nonce,
+      chainId: options.chainId,
+      to: contract.options.address,
+      data: contract.methods[options.methodName](...options.params).encodeABI()
+    }
+
+    const { rawTransaction } = await this.web3.eth.accounts.signTransaction(tx, this.getPrivateKey('hex0x'))
     const { data: receipt } = await this.axios.post('/tx', { rawTransaction, address: this.address })
     return abiDecoder.decodeLogs(receipt.logs)
   }

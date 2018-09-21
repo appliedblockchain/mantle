@@ -2,7 +2,7 @@
   "name": "@appliedblockchain/mantle",
   "version": "1.0.7",
   "description": "Mantle is a blockchain SDK targeting Ethereum and Hyperledger Fabric",
-  "main": "src/mantle.js",
+  "main": "src/sdk/mantle.js",
   "scripts": {
     "start": "node src/api/server.js",
     "test": "jest",
