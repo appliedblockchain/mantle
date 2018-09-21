@@ -1,3 +1,4 @@
+const BPrivacy = require('@appliedblockchain/b-privacy')
 const {
   bufferToHex,
   bufferToHex0x,
@@ -9,7 +10,8 @@ const utils = {
   bufferToHex,
   bufferToHex0x,
   bufferToOther,
-  bytesToBuffer
+  bytesToBuffer,
+  publicKeyToAddress: BPrivacy.publicKeyToAddress
 }
 
 module.exports = utils
