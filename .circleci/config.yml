@@ -59,4 +59,4 @@ jobs:
 
       # Wait for the server to load before running tests
       - run: dockerize -wait tcp://localhost:3000 -timeout 20s
-      - run: npm test
+      - run: npm run circleci

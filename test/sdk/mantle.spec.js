@@ -6,15 +6,33 @@ const secp256k1 = require('secp256k1')
 const Mnemonic = require('bitcore-mnemonic')
 const { checkAddressChecksum } = require('web3-utils')
 const { isHex, isHex0x } = require('../../src/sdk/utils/typeChecks')
+const Ganache = require('ganache-core')
+const circleci = process.env.NODE_ENV === 'circleci'
 
 describe('Mantle', () => {
-  let data
+  let data, server
 
   beforeAll(async () => {
     data = 'foo'
+    if (!circleci) {
+      server = Ganache.server()
+      await server.listen(8545)
+    }
+  })
+
+  afterAll(async () => {
+    if (server) {
+      await server.close()
+    }
   })
 
   test('signs and sends a transaction', async () => {
+    /* Sending signed transactions is not available on Ganache - so only allow
+     * permit this test to run in a parity environment (i.e. circleci) */
+    if (!circleci) {
+      return
+    }
+
     const contractName = 'TestContract'
     const contract = {
       id: contractName,
@@ -306,8 +324,12 @@ describe('Mantle', () => {
       expect(typeof blockNum === 'number').toBeTruthy()
     })
 
-    test.skip('throws an error on unsuccessful connection to a block', async () => {
-      // TODO: Revise this test to accommodate for using parity in place of Ganache
+    test('throws an error on unsuccessful connection to a block', async () => {
+      if (circleci) {
+        return
+      }
+
+      await server.close()
       const mantle = new Mantle()
 
       try {
@@ -315,6 +337,10 @@ describe('Mantle', () => {
       } catch (err) {
         const error = new Error('Error: Invalid JSON RPC response: ""')
         expect(err).toEqual(error)
+      } finally {
+        // Rebuild the server for remaining tests
+        server = Ganache.server()
+        server.listen(8545)
       }
     })
 

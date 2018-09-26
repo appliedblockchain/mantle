@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/api/server.js",
     "test": "jest",
+    "circleci": "NODE_ENV=circleci jest",
     "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo"
   },
   "repository": {
@@ -42,6 +43,7 @@
     "esdoc-node": "^1.0.3",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^5.4.0",
+    "ganache-core": "^2.2.1",
     "jest": "^23.5.0",
     "secp256k1": "^3.5.2"
   }
