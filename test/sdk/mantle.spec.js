@@ -33,11 +33,13 @@ describe('Mantle', () => {
     mantle.loadMnemonic()
     mantle.loadContract(contract)
 
-    const logs = await mantle.signAndSendTransaction({
+    const rawTransaction = await mantle.signTransaction({
       contractName,
       methodName: 'foo',
       params: [ 1 ]
     })
+
+    const logs = await mantle.sendSignedTransaction(rawTransaction)
 
     expect(logs.constructor).toBe(Array)
   })

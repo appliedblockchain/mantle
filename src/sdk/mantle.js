@@ -42,9 +42,9 @@ class Mantle {
    * @param  {array}  options.params
    * @param  {string} [options.nonce]
    * @param  {string} [options.chainId]
-   * @return {array}
+   * @return {string}
    */
-  async signAndSendTransaction(options) {
+  async signTransaction(options) {
     if (!this.keysLoaded) {
       throw new Error('Cannot sign and send transaction: account has not been loaded')
     }
@@ -68,6 +68,14 @@ class Mantle {
     }
 
     const { rawTransaction } = await this.web3.eth.accounts.signTransaction(tx, this.getPrivateKey('hex0x'))
+    return rawTransaction
+  }
+
+  /**
+   * @param  {string} rawTransaction
+   * @return {array}
+   */
+  async sendSignedTransaction(rawTransaction) {
     const { data: receipt } = await this.axios.post('/tx', { rawTransaction, address: this.address })
     return abiDecoder.decodeLogs(receipt.logs)
   }
