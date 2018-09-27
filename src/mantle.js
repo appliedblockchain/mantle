@@ -180,62 +180,73 @@ class Mantle {
     this.mnemonic = code.phrase
     this.hdPrivateKey = hdPrivateKey
     this.hdPublicKey = hdPublicKey
-    this.privateKey = this.derivePrivateKey()
-    this.publicKey = this.derivePublicKey()
-    this.address = this.deriveEthereumAddress()
+
+    // Generate keys for the instance
+    this.derivePrivateKeys()
+    this.derivePublicKeys()
+    this.deriveEthereumAddresses()
 
     this.keysLoaded = true
   }
 
   /**
-   * Derive a checksum address from our private key
-   * @return {string}
+   * Derive checksum addresses from our private keys
+   * @return {void}
    */
-  deriveEthereumAddress() {
-    if (!this.privateKey) {
+  deriveEthereumAddresses() {
+    if (!this.encPrivateKey || !this.sigPrivateKey) {
       throw new Error('Cannot derive an ethereum address: no private key exists')
     }
 
-    const privateKey = utils.bufferToHex0x(this.privateKey)
-    const { address } = this.web3.eth.accounts.privateKeyToAccount(privateKey)
-    return address
+    const encPrivateKey = this.getEncPrivateKey('hex0x')
+    const sigPrivateKey = this.getSigPrivateKey('hex0x')
+
+    this.encAddress = this.web3.eth.accounts.privateKeyToAccount(encPrivateKey).address
+    this.sigAddress = this.web3.eth.accounts.privateKeyToAccount(sigPrivateKey).address
   }
 
   /**
-   * Derive a private key from our HDPrivateKey
+   * Derive private keys from our HDPrivateKey
    * @param  {number} index=0
-   * @return {buffer}
+   * @return {void}
    */
-  derivePrivateKey(index = 0) {
+  derivePrivateKeys(index = 0) {
     if (!this.hdPrivateKey) {
       throw new Error('Cannot derive a private key: no HD private key exists')
     }
 
     const PURPOSE = 44 // 44: BIP44 specification
     const COIN_TYPE = 60 // 60: ethereum
-    const ACCOUNT = 0
+    const ENC_ACCOUNT = 0
+    const SIG_ACCOUNT = 1
     const CHANGE = 0 // 0: public
-    const PATH_LEVEL = `${PURPOSE}'/${COIN_TYPE}'/${ACCOUNT}'/${CHANGE}`
+    const ENC_PATH_LEVEL = `${PURPOSE}'/${COIN_TYPE}'/${ENC_ACCOUNT}'/${CHANGE}`
+    const SIG_PATH_LEVEL = `${PURPOSE}'/${COIN_TYPE}'/${SIG_ACCOUNT}'/${CHANGE}`
 
     // Private key derivation reference: https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
-    const derivedChild = this.hdPrivateKey.derive(`m/${PATH_LEVEL}/${index}`)
+    this.encHdPrivateKey = this.hdPrivateKey.derive(`m/${ENC_PATH_LEVEL}/${index}`)
+    this.sigHdPrivateKey = this.hdPrivateKey.derive(`m/${SIG_PATH_LEVEL}/${index + 1}`)
+
     // Includes big number(BN) and network
-    const privateKey = derivedChild.privateKey
+    const encPrivateKey = this.encHdPrivateKey.privateKey
+    const sigPrivateKey = this.sigHdPrivateKey.privateKey
 
     // Access the big number(BN) and convert to a Buffer - this serves as our private key
-    return privateKey.bn.toBuffer({ size: 32 })
+    this.encPrivateKey = encPrivateKey.bn.toBuffer({ size: 32 })
+    this.sigPrivateKey = sigPrivateKey.bn.toBuffer({ size: 32 })
   }
 
   /**
-   * Derive a public key from our private key
-   * @return {buffer}
+   * Derive public keys from our private keys
+   * @return {void}
    */
-  derivePublicKey() {
-    if (!this.privateKey) {
+  derivePublicKeys() {
+    if (!this.encPrivateKey || !this.sigPrivateKey) {
       throw new Error('Cannot derive a public key: no private key exists')
     }
 
-    return secp256k1.publicKeyCreate(this.privateKey, false).slice(1)
+    this.encPublicKey = secp256k1.publicKeyCreate(this.encPrivateKey, false).slice(1),
+    this.sigPublicKey = secp256k1.publicKeyCreate(this.sigPrivateKey, false).slice(1)
   }
 
   /**
@@ -243,12 +254,21 @@ class Mantle {
    * @return {void}
    */
   removeKeys() {
-    this.address = null
     this.mnemonic = null
+
     this.hdPrivateKey = null
     this.hdPublicKey = null
-    this.privateKey = null
-    this.publicKey = null
+
+    this.encHdPrivateKey = null
+    this.encAddress = null
+    this.encPrivateKey = null
+    this.encPublicKey = null
+
+    this.sigHdPrivateKey = null
+    this.sigPrivateKey = null
+    this.sigPublicKey = null
+    this.sigAddress = null
+
     this.keysLoaded = false
   }
 
@@ -334,14 +354,76 @@ class Mantle {
     return utils.bufferToOther(this.privateKey, format)
   }
 
+  /**
+   * @param  {string} format='buffer'
+   * @return {buffer|hex|hex0x}
+   */
+  getEncPublicKey(format = 'buffer') {
+    return utils.bufferToOther(this.encPublicKey, format)
+  }
+
+  /**
+   * @param  {string} format='buffer'
+   * @return {buffer|hex|hex0x}
+   */
+  getEncPrivateKey(format = 'buffer') {
+    return utils.bufferToOther(this.encPrivateKey, format)
+  }
+
+  /**
+   * @param  {string} format='buffer'
+   * @return {buffer|hex|hex0x}
+   */
+  getSigPublicKey(format = 'buffer') {
+    return utils.bufferToOther(this.sigPublicKey, format)
+  }
+
+  /**
+   * @param  {string} format='buffer'
+   * @return {buffer|hex|hex0x}
+   */
+  getSigPrivateKey(format = 'buffer') {
+    return utils.bufferToOther(this.sigPrivateKey, format)
+  }
+
+
+  /**
+   * @param  {hex0x} hash
+   * @param  {hex0x} ecSignature
+   * @return {hex0x}
+   */
   static recoverAddress(hash, ecSignature) {
     const publicKey = Mantle.recover(hash, ecSignature)
     const address = BPrivacy.publicKeyToAddress(publicKey)
     return address
   }
 
+  /**
+   * @return {object}
+   */
   static get utils() {
     return utils
+  }
+
+  /**
+   * @return {hex0x}
+   */
+  get address() {
+    return this.encAddress
+  }
+
+  /**
+   * @return {buffer}
+   */
+  get privateKey() {
+    return this.encPrivateKey
+  }
+
+  /**
+   * @return {buffer}
+   */
+  get publicKey() {
+    return this.encPublicKey
   }
 }
 

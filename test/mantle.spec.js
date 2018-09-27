@@ -45,6 +45,14 @@ describe('Mantle', () => {
     expect(Buffer.isBuffer(mantle.getPrivateKey())).toBe(true)
     expect(isHex(mantle.getPrivateKey('hex'))).toBe(true)
     expect(isHex0x(mantle.getPrivateKey('hex0x'))).toBe(true)
+
+    expect(Buffer.isBuffer(mantle.getSigPublicKey())).toBe(true)
+    expect(isHex(mantle.getSigPublicKey('hex'))).toBe(true)
+    expect(isHex0x(mantle.getSigPublicKey('hex0x'))).toBe(true)
+
+    expect(Buffer.isBuffer(mantle.getSigPrivateKey())).toBe(true)
+    expect(isHex(mantle.getSigPrivateKey('hex'))).toBe(true)
+    expect(isHex0x(mantle.getSigPrivateKey('hex0x'))).toBe(true)
   })
 
   describe('IPFS integration', () => {
@@ -77,7 +85,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = Mantle.sign(data, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.sigPrivateKey)
 
       expect(signature).toBeTruthy()
       expect(signature.startsWith('0x')).toBe(true)
@@ -89,7 +97,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = Mantle.sign(data, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.sigPrivateKey)
 
       const invalidHash = '@invalid_hash'
 
@@ -117,10 +125,10 @@ describe('Mantle', () => {
       const mantle = new Mantle()
 
       mantle.loadMnemonic()
-      const signature = Mantle.sign(data, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.sigPrivateKey)
       const publicKey = Mantle.recover(hash, signature)
 
-      expect(publicKey).toEqual('0x' + mantle.publicKey.toString('hex'))
+      expect(publicKey).toEqual(mantle.getSigPublicKey('hex0x'))
     })
 
     test('recovers the address for an account that signed some data, via recoverAddress()', () => {
@@ -128,10 +136,10 @@ describe('Mantle', () => {
       mantle.loadMnemonic()
       const hash = Mantle.generateHash(data)
 
-      const signature = Mantle.sign(data, mantle.privateKey)
+      const signature = Mantle.sign(data, mantle.sigPrivateKey)
       const address = Mantle.recoverAddress(hash, signature)
 
-      expect(address).toEqual(mantle.address)
+      expect(address).toEqual(mantle.sigAddress)
     })
   })
 
@@ -172,7 +180,7 @@ describe('Mantle', () => {
       const mantle = new Mantle()
       mantle.loadMnemonic()
 
-      const { address, mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
+      const { address, mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey, sigAddress, sigPublicKey, sigPrivateKey } = mantle
 
       expect(address).toBeTruthy()
       expect(mnemonic).toBeTruthy()
@@ -180,15 +188,25 @@ describe('Mantle', () => {
       expect(hdPublicKey).toBeTruthy()
       expect(privateKey).toBeTruthy()
       expect(publicKey).toBeTruthy()
+      expect(sigAddress).toBeTruthy()
+      expect(sigPrivateKey).toBeTruthy()
+      expect(sigPublicKey).toBeTruthy()
+
+      expect(typeof mnemonic === 'string').toBe(true)
+      expect(mnemonic.split(' ').length).toEqual(12)
 
       expect(typeof address === 'string').toBe(true)
       expect(address.startsWith('0x')).toBe(true)
+      expect(typeof sigAddress === 'string').toBe(true)
+      expect(sigAddress.startsWith('0x')).toBe(true)
 
       expect(checkAddressChecksum(address)).toBe(true)
-      expect(typeof mnemonic === 'string').toBe(true)
-      expect(mnemonic.split(' ').length).toEqual(12)
       expect(Buffer.isBuffer(privateKey)).toBe(true)
       expect(Buffer.isBuffer(publicKey)).toBe(true)
+
+      expect(checkAddressChecksum(sigAddress)).toBe(true)
+      expect(Buffer.isBuffer(sigPrivateKey)).toBe(true)
+      expect(Buffer.isBuffer(sigPublicKey)).toBe(true)
     })
 
     test('generates different keys when not supplying a seed/mnemonic', () => {
@@ -236,14 +254,19 @@ describe('Mantle', () => {
       mantle.loadMnemonic()
       mantle.removeKeys()
 
-      const { address, mnemonic, hdPublicKey, hdPrivateKey, publicKey, privateKey } = mantle
-
-      expect(address).toBe(null)
-      expect(mnemonic).toBe(null)
-      expect(hdPrivateKey).toBe(null)
-      expect(hdPublicKey).toBe(null)
-      expect(privateKey).toBe(null)
-      expect(publicKey).toBe(null)
+      expect(mantle.address).toBe(null)
+      expect(mantle.mnemonic).toBe(null)
+      expect(mantle.hdPrivateKey).toBe(null)
+      expect(mantle.hdPublicKey).toBe(null)
+      expect(mantle.privateKey).toBe(null)
+      expect(mantle.publicKey).toBe(null)
+      expect(mantle.encAddress).toBe(null)
+      expect(mantle.encPublicKey).toBe(null)
+      expect(mantle.encPrivateKey).toBe(null)
+      expect(mantle.encHdPrivateKey).toBe(null)
+      expect(mantle.sigAddress).toBe(null)
+      expect(mantle.sigPublicKey).toBe(null)
+      expect(mantle.sigPrivateKey).toBe(null)
     })
   })
 
