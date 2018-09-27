@@ -1,5 +1,5 @@
-const Mantle = require('../src/mantle')
-const Contract = require('../src/contract')
+const Mantle = require('../../src/sdk/mantle')
+const Contract = require('../../src/sdk/contract')
 const { fromAscii } = require('web3-utils')
 
 describe('Contract', () => {

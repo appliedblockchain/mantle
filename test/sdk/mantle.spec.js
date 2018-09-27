@@ -1,4 +1,5 @@
 const Mantle = require('../../src/sdk/mantle')
+const Contract = require('../../src/sdk/contract')
 const IPFS = require('../../src/sdk/ipfs')
 const defaults = require('../../src/sdk/defaults')
 const errors = require('../../src/sdk/errors')
@@ -35,7 +36,7 @@ describe('Mantle', () => {
 
     const contractName = 'TestContract'
     const contract = {
-      id: contractName,
+      name: contractName,
       abi: [ {
         'type': 'function',
         'inputs': [ { 'name': 'a', 'type': 'uint256' } ],
