@@ -31,7 +31,7 @@ describe('Config', () => {
         {
           address,
           abi: null,
-          id: 'foo'
+          name: 'foo'
         }
       ]
 
@@ -45,7 +45,7 @@ describe('Config', () => {
         {
           abi,
           address: '@invalid_address',
-          id: 'foo'
+          name: 'foo'
         }
       ]
 
@@ -59,7 +59,7 @@ describe('Config', () => {
         {
           address,
           abi: '@invalid_abi',
-          id: 'foo'
+          name: 'foo'
         }
       ]
 
@@ -73,7 +73,7 @@ describe('Config', () => {
         {
           abi,
           address: '@invalid_address',
-          id: 'foo'
+          name: 'foo'
         }
       ]
 
@@ -82,28 +82,28 @@ describe('Config', () => {
       }).toThrow(errors.invalidAddress('foo'))
     })
 
-    test('throws an error if no contract id is provided', () => {
+    test('throws an error if no contract name is provided', () => {
       const contracts = [
         {
           abi,
           address,
-          id: null
+          name: null
         }
       ]
 
       expect(() => {
         new Config({ ...defaults, contracts })
-      }).toThrow(errors.noContractId())
+      }).toThrow(errors.noContractName())
     })
   })
 
   describe('On success', () => {
-    test('successfully initializes when a valid contract id, contract address and contract abi are provided', () => {
+    test('successfully initializes when a valid contract name, contract address and contract abi are provided', () => {
       const contracts = [
         {
           abi,
           address,
-          id: 'foo'
+          name: 'foo'
         }
       ]
 

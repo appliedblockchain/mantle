@@ -42,17 +42,17 @@ class Config {
    * @return {void}
    */
   validateContracts(contracts) {
-    contracts.forEach(({ id, abi, address }) => {
-      if (!id) {
-        throw errors.noContractId()
+    contracts.forEach(({ name, abi, address }) => {
+      if (!name) {
+        throw errors.noContractName()
       }
 
       if (!isArray(abi)) {
-        throw errors.invalidAbi(id)
+        throw errors.invalidAbi(name)
       }
 
       if (address && !isAddress(address)) {
-        throw errors.invalidAddress(id)
+        throw errors.invalidAddress(name)
       }
     })
   }

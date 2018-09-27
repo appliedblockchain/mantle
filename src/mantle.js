@@ -4,6 +4,7 @@ const Web3 = require('web3')
 const Mnemonic = require('bitcore-mnemonic')
 const secp256k1 = require('secp256k1')
 const Config = require('./config')
+const Contract = require('./contract')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
 const utils = require('./utils')
@@ -54,20 +55,18 @@ class Mantle {
   }
 
   /**
-   * Generate a new web3.eth.Contract instance and attach it to our
-   * contracts object using a unique Contract id as the key
+   * Generate a Contract instance and attach it to our
+   * contracts object using a unique Contract name as the key
    * @param  {object} contract
-   * @return {web3.eth.Contract}
+   * @return {Contract}
    */
   loadContract(contract) {
-    const { id, abi, address } = contract
-
-    if (!id) {
-      throw errors.noContractId()
+    if (!contract.name) {
+      throw errors.noContractName()
     }
 
-    this.contracts[id] = new this.web3.eth.Contract(abi, address)
-    return this.contracts[id]
+    this.contracts[contract.name] = new Contract(this.web3, contract)
+    return this.contracts[contract.name]
   }
 
   get Web3() {
