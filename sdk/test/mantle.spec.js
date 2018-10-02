@@ -1,12 +1,12 @@
-const Mantle = require('../../src/sdk/mantle')
-const Contract = require('../../src/sdk/contract')
-const IPFS = require('../../src/sdk/ipfs')
-const defaults = require('../../src/sdk/defaults')
-const errors = require('../../src/sdk/errors')
+const Mantle = require('../src/mantle')
+const Contract = require('../src/contract')
+const IPFS = require('../src/ipfs')
+const defaults = require('../src/defaults')
+const errors = require('../src/errors')
 const secp256k1 = require('secp256k1')
 const Mnemonic = require('bitcore-mnemonic')
 const { checkAddressChecksum } = require('web3-utils')
-const { isHex, isHex0x } = require('../../src/sdk/utils/typeChecks')
+const { isHex, isHex0x } = require('../src/utils/typeChecks')
 const Ganache = require('ganache-core')
 const circleci = process.env.NODE_ENV === 'circleci'
 
@@ -101,6 +101,9 @@ describe('Mantle', () => {
       const mantle = new Mantle()
       expect(typeof mantle.ipfs).toEqual('object')
       expect(mantle.ipfs.constructor).toEqual(IPFS)
+      expect(mantle.ipfs.retrieve).toBeTruthy()
+      expect(mantle.ipfs.remove).toBeTruthy()
+      expect(mantle.ipfs.store).toBeTruthy()
     })
   })
 
