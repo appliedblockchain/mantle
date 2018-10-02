@@ -58,10 +58,13 @@ class Mantle {
       throw new Error(`Cannot sign and send transaction: no method ${options.methodName} exists for contract ${options.contractName}`)
     }
 
+    // TODO: Proxy request
+    const nonce = await this.web3.eth.getTransactionCount(contract.options.address)
+
     const tx = {
       gasPrice: '0',
       gas: '50000000',
-      nonce: options.nonce,
+      nonce: options.nonce || nonce,
       chainId: options.chainId,
       to: contract.options.address,
       data: contract.methods[options.methodName](...options.params).encodeABI()
