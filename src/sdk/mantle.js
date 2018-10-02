@@ -59,7 +59,7 @@ class Mantle {
     }
 
     // TODO: Proxy request
-    const nonce = await this.web3.eth.getTransactionCount(contract.options.address)
+    const nonce = await this.web3.eth.getTransactionCount(this.address)
 
     const tx = {
       gasPrice: '0',
