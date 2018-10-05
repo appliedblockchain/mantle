@@ -24,7 +24,7 @@ class Mantle {
 
     this.contracts = {}
     this.keysLoaded = false
-    this.ipfs = new IPFS(this.config.ipfs)
+    this.ipfs = new IPFS(this.config)
 
     this.setupWeb3Provider()
     this.loadContracts(this.config.contracts)

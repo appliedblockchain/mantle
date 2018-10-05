@@ -1,7 +1,7 @@
-const Config = require('../../src/sdk/config')
-const Mantle = require('../../src/sdk/mantle')
-const errors = require('../../src/sdk/errors')
-const defaults = require('../../src/sdk/defaults')
+const Config = require('../src/config')
+const Mantle = require('../src/mantle')
+const errors = require('../src/errors')
+const defaults = require('../src/defaults')
 
 describe('Config', () => {
   let abi, address

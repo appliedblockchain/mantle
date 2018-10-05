@@ -14,10 +14,5 @@ module.exports = {
   contracts: [],
   servers: [],
   provider: 'http://localhost:8545',
-  ipfs: {
-    host: '127.0.0.1',
-    port: '5001',
-    protocol: 'http'
-  },
   proxyURL: 'http://localhost:3000/api'
 }

@@ -1,0 +1,33 @@
+{
+  "name": "@appliedblockchain/mantle-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "eslintConfig": {
+    "extends": "@appliedblockchain"
+  },
+  "dependencies": {
+    "@appliedblockchain/b-privacy": "^1.2.0",
+    "@koa/cors": "^2.2.2",
+    "abi-decoder": "^1.2.0",
+    "ipfs-api": "^24.0.1",
+    "koa": "^2.5.3",
+    "koa-bodyparser": "^4.2.1",
+    "koa-compress": "^3.0.0",
+    "koa-joi-router": "^5.1.0",
+    "koa-respond": "^1.0.1",
+    "web3": "1.0.0-beta.33"
+  },
+  "devDependencies": {
+    "@appliedblockchain/eslint-config": "^2.3.0",
+    "eslint": "^5.4.0",
+    "ganache-core": "^2.2.1",
+    "jest": "^23.5.0"
+  }
+}
