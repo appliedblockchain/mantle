@@ -1,11 +1,4 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# References:
-# https://circleci.com/docs/2.0/language-javascript/
-# https://circleci.com/docs/2.0/configuration-reference/ 
-# https://circleci.com/docs/2.0/caching/
-# https://circleci.com/docs/2.0/circleci-images/
-
+# TODO: Utilise workflows for parallel builds
 version: 2
 jobs:
   build:
@@ -39,24 +32,38 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-api-{{ checksum "api/package.json" }}
+          - v1-sdk-{{ checksum "sdk/package.json" }}
           # Fallback to using the latest cache if no exact match is found
           - v1-dependencies-
+      
+      - run:
+          name: yarn install sdk
+          command: cd ~/mantle/sdk && yarn install
 
-      - run: yarn install
+      - run:
+          name: yarn install api
+          command: cd ~/mantle/api && yarn install
 
       - save_cache:
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v1-api-{{ checksum "api/package.json" }}
           paths:
-            - node_modules
+            - /api/node_modules
+      
+      - save_cache:
+          key: v1-sdk-{{ checksum "sdk/package.json" }}
+          paths:
+            - /sdk/node_modules
     
       - setup_remote_docker
 
       - run:
           name: api server
-          command: npm run start
+          command: cd ~/mantle/api && npm run start
           background: true
 
       # Wait for the server to load before running tests
       - run: dockerize -wait tcp://localhost:3000 -timeout 20s
-      - run: npm run circleci
+      - run:
+          name: run circleci
+          command: cd ~/mantle/sdk && npm run circleci
