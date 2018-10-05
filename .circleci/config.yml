@@ -12,21 +12,29 @@ jobs:
     docker:
     # Primary docker container
     - image: circleci/node:10.7
+    - image: appliedblockchain/parity-solo:latest
+      auth:
+        username: $DOCKER_USER
+        password: $DOCKER_PASSWORD
+    - image: appliedblockchain/ipfs-solo:latest
+      auth:
+        username: $DOCKER_USER
+        password: $DOCKER_PASSWORD
 
-    working_directory: ~/mantle 
+    working_directory: ~/mantle
 
     steps:
       - checkout
 
       - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
+
+      - run:
           name: Authorize NPM
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-
-      # Install ipfs and initialize
-      - run: wget https://dist.ipfs.io/go-ipfs/v0.4.17/go-ipfs_v0.4.17_linux-amd64.tar.gz
-      - run: tar xvfz go-ipfs_v0.4.17_linux-amd64.tar.gz
-      - run: sudo cp go-ipfs/ipfs /usr/local/bin
-      - run: ipfs init
 
       # Download and cache dependencies
       - restore_cache:
@@ -41,6 +49,14 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
           paths:
             - node_modules
-      
-      # Run ipfs daemon for ipfs API access and run tests
-      - run: ipfs daemon & yarn test
+    
+      - setup_remote_docker
+
+      - run:
+          name: api server
+          command: npm run start
+          background: true
+
+      # Wait for the server to load before running tests
+      - run: dockerize -wait tcp://localhost:3000 -timeout 20s
+      - run: npm run circleci

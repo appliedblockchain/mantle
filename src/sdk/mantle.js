@@ -8,6 +8,8 @@ const Contract = require('./contract')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
 const utils = require('./utils')
+const axios = require('axios')
+const abiDecoder = require('abi-decoder')
 
 /**
  * @class Mantle
@@ -26,6 +28,59 @@ class Mantle {
 
     this.setupWeb3Provider()
     this.loadContracts(this.config.contracts)
+
+    this.axios = axios.create({
+      baseURL: this.config.proxyURL,
+      timeout: 5000
+    })
+  }
+
+  /**
+   * @param  {object} options
+   * @param  {string} options.contractName
+   * @param  {string} options.methodName
+   * @param  {array}  options.params
+   * @param  {string} [options.nonce]
+   * @param  {string} [options.chainId]
+   * @return {string}
+   */
+  async signTransaction(options) {
+    if (!this.keysLoaded) {
+      throw new Error('Cannot sign and send transaction: account has not been loaded')
+    }
+
+    const contract = this.contracts[options.contractName]
+    if (!contract) {
+      throw new Error(`Cannot sign and send transaction: no contract exists with name ${options.contractName}`)
+    }
+
+    if (!contract.methods[options.methodName]) {
+      throw new Error(`Cannot sign and send transaction: no method ${options.methodName} exists for contract ${options.contractName}`)
+    }
+
+    // TODO: Proxy request
+    const nonce = await this.web3.eth.getTransactionCount(this.address)
+
+    const tx = {
+      gasPrice: '0',
+      gas: '50000000',
+      nonce: options.nonce || nonce,
+      chainId: options.chainId,
+      to: contract.options.address,
+      data: contract.methods[options.methodName](...options.params).encodeABI()
+    }
+
+    const { rawTransaction } = await this.web3.eth.accounts.signTransaction(tx, this.getPrivateKey('hex0x'))
+    return rawTransaction
+  }
+
+  /**
+   * @param  {string} rawTransaction
+   * @return {array}
+   */
+  async sendSignedTransaction(rawTransaction) {
+    const { data: receipt } = await this.axios.post('/tx', { rawTransaction, address: this.address })
+    return abiDecoder.decodeLogs(receipt.logs)
   }
 
   /**

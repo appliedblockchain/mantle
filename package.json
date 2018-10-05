@@ -1,10 +1,13 @@
 {
   "name": "@appliedblockchain/mantle",
-  "version": "1.0.7",
+  "version": "1.0.10",
   "description": "Mantle is a blockchain SDK targeting Ethereum and Hyperledger Fabric",
-  "main": "src/mantle.js",
+  "main": "src/sdk/mantle.js",
   "scripts": {
-    "test": "jest"
+    "start": "node src/api/server.js",
+    "test": "jest",
+    "circleci": "NODE_ENV=circleci jest",
+    "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo"
   },
   "repository": {
     "type": "git",
@@ -21,8 +24,16 @@
   },
   "dependencies": {
     "@appliedblockchain/b-privacy": "^1.2.0",
+    "@koa/cors": "^2.2.2",
+    "abi-decoder": "^1.2.0",
+    "axios": "^0.18.0",
     "bitcore-mnemonic": "^1.5.0",
     "ipfs-api": "^24.0.1",
+    "koa": "^2.5.3",
+    "koa-bodyparser": "^4.2.1",
+    "koa-compress": "^3.0.0",
+    "koa-joi-router": "^5.1.0",
+    "koa-respond": "^1.0.1",
     "web3": "1.0.0-beta.33"
   },
   "devDependencies": {

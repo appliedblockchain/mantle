@@ -1,25 +1,66 @@
-const Contract = require('../src/contract')
-const Mantle = require('../src/mantle')
-const IPFS = require('../src/ipfs')
-const defaults = require('../src/defaults')
-const errors = require('../src/errors')
+const Mantle = require('../../src/sdk/mantle')
+const Contract = require('../../src/sdk/contract')
+const IPFS = require('../../src/sdk/ipfs')
+const defaults = require('../../src/sdk/defaults')
+const errors = require('../../src/sdk/errors')
 const secp256k1 = require('secp256k1')
 const Mnemonic = require('bitcore-mnemonic')
 const { checkAddressChecksum } = require('web3-utils')
-const { isHex, isHex0x } = require('../src/utils/typeChecks')
+const { isHex, isHex0x } = require('../../src/sdk/utils/typeChecks')
 const Ganache = require('ganache-core')
+const circleci = process.env.NODE_ENV === 'circleci'
 
 describe('Mantle', () => {
-  let server, data
+  let data, server
 
   beforeAll(async () => {
     data = 'foo'
-    server = Ganache.server()
-    await server.listen(8545)
+    if (!circleci) {
+      server = Ganache.server()
+      await server.listen(8545)
+    }
   })
 
   afterAll(async () => {
-    await server.close()
+    if (server) {
+      await server.close()
+    }
+  })
+
+  test('signs and sends a transaction', async () => {
+    /* Sending signed transactions is not available on Ganache - so only allow
+     * permit this test to run in a parity environment (i.e. circleci) */
+    if (!circleci) {
+      return
+    }
+
+    const contractName = 'TestContract'
+    const contract = {
+      name: contractName,
+      abi: [ {
+        'type': 'function',
+        'inputs': [ { 'name': 'a', 'type': 'uint256' } ],
+        'name': 'foo',
+        'outputs': []
+      } ],
+      options: {
+        address: '0x0x571e8a7ed290a45cf4f3dabdeb8674b000e0a4'
+      }
+    }
+
+    const mantle = new Mantle()
+    mantle.loadMnemonic()
+    mantle.loadContract(contract)
+
+    const rawTransaction = await mantle.signTransaction({
+      contractName,
+      methodName: 'foo',
+      params: [ 1 ]
+    })
+
+    const logs = await mantle.sendSignedTransaction(rawTransaction)
+
+    expect(logs.constructor).toBe(Array)
   })
 
   test('throws an error if no configuration is provided', () => {
@@ -285,10 +326,12 @@ describe('Mantle', () => {
     })
 
     test('throws an error on unsuccessful connection to a block', async () => {
-      // Close connection to Ganache server so that mantle connection attempt fails
+      if (circleci) {
+        return
+      }
+
       await server.close()
       const mantle = new Mantle()
-
 
       try {
         await mantle.connect()
