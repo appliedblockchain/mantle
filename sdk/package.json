@@ -1,5 +1,6 @@
 {
   "name": "@appliedblockchain/mantle",
+  "private": true,
   "version": "1.0.10",
   "description": "Mantle is a blockchain SDK targeting Ethereum and Hyperledger Fabric",
   "main": "src/mantle.js",
@@ -7,7 +8,8 @@
     "start": "node src/api/server.js",
     "test": "jest",
     "circleci": "NODE_ENV=circleci jest",
-    "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo"
+    "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo",
+    "build": "./build.sh"
   },
   "repository": {
     "type": "git",
@@ -37,6 +39,7 @@
     "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^5.4.0",
     "ganache-core": "^2.2.1",
+    "javascript-obfuscator": "^0.18.1",
     "jest": "^23.5.0",
     "secp256k1": "^3.5.2"
   }
