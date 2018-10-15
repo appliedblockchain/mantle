@@ -72,10 +72,24 @@ const decrypted = Mantle.decryptSymmetric(encrypted, secret) // 'foo'
 - Install and initialize IPFS ([see IPFS setup section](#ipfs-setup))
 - Run the IPFS daemon: `ipfs daemon`
 - Load the api server to handle proxied requests: 
+    - `cd path/to/api`
     - `npm run start`
 - Optional - Load an instance of parity to test ganache non-compliant tests (currently skipped tests):
     - `npm run parity`
 - Run test suite: `npm test`
+
+# Publication
+
+An obfuscated version of our source code should be published to npm.
+
+*Steps include:*
+- If a change has been made to Mantle source code, patch the version after committing changes:
+  - `npm version patch`
+- Build the dist folder:
+  - `npm run build`
+- Publish:
+  - `cd dist`
+  - `npm publish`
 
 # Documentation
 
