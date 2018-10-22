@@ -13,6 +13,7 @@
     "ipfs-api": "^25.0.0"
   },
   "devDependencies": {
+    "javascript-obfuscator": "^0.18.1",
     "jest": "^23.6.0"
   }
 }

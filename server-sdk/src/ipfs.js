@@ -18,16 +18,20 @@ function IPFS(host) {
   
   /**
    * Stores data on IPFS and pins the hash to the pinset
-   * @param  {string} data
+   * @param  {string|buffer} data
    * @return {string}
    */
   async function store(data) {
-    const [ storedData ] = await ipfs.add(Buffer.from(data))
+    if (typeof data === 'string') {
+      data = Buffer.from(data, 'utf8')
+    }
+
+    const [ storedData ] = await ipfs.add(data)
     const { hash } = storedData
     await ipfs.pin.add(hash)
     return hash
   }
-  
+
   /**
    * Removes data from IPFS by unpinning the hash and then running
    * the IPFS garbage collector
