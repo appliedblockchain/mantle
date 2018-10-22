@@ -34,6 +34,7 @@ jobs:
           keys:
           - v1-api-{{ checksum "api/package.json" }}
           - v1-sdk-{{ checksum "sdk/package.json" }}
+          - v1-server-sdk-{{ checksum "server-sdk/package.json" }}
           # Fallback to using the latest cache if no exact match is found
           - v1-dependencies-
       
