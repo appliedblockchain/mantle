@@ -1,0 +1,18 @@
+{
+  "name": "@appliedblockchain/mantle-server",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/mantle.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "appliedblockchain",
+  "license": "",
+  "dependencies": {
+    "ipfs-api": "^25.0.0"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0"
+  }
+}

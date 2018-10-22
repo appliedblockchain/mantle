@@ -6,9 +6,9 @@ module.exports = [
     method: 'get',
     path: '/ipfs/pin/:hash',
     handler: async ctx => {
-        const { hash } = ctx.request.params
-        const retrievedPin = await ipfs.pin.ls(hash)
-        ctx.body = retrievedPin
+      const { hash } = ctx.request.params
+      const retrievedPin = await ipfs.pin.ls(hash)
+      ctx.body = retrievedPin
     }
   },
   {
@@ -24,7 +24,7 @@ module.exports = [
     method: 'post',
     path: '/ipfs/store',
     validate: {
-      type: 'json',
+      type: 'json'
     },
     handler: async ctx => {
       const { data } = ctx.request.body
