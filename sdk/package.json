@@ -15,7 +15,7 @@
     "type": "git",
     "url": "git+https://github.com/appliedblockchain/mantle.git"
   },
-  "author": "",
+  "author": "appliedblockchain",
   "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/appliedblockchain/mantle/issues"

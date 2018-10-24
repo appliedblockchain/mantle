@@ -1,4 +1,4 @@
 *node_modules
 *docs
 .vscode
-sdk/dist/
+*/dist/
