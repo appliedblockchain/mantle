@@ -28,6 +28,7 @@ references:
 
 jobs:
   build:
+    <<: *defaults
     docker:
     # Primary docker container
     - image: circleci/node:10.7
@@ -41,7 +42,7 @@ jobs:
         password: $DOCKER_PASSWORD
 
 
-    working_directory: ~/mantle
+    # working_directory: ~/mantle
 
     steps:
       - checkout
