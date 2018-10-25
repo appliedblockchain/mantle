@@ -40,6 +40,8 @@ jobs:
         password: $DOCKER_PASSWORD
 
 
+    working_directory: ~/mantle
+
     steps:
       - checkout
 
