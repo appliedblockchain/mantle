@@ -5,7 +5,8 @@
   "description": "",
   "main": "src/mantle.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "./build.sh"
   },
   "author": "appliedblockchain",
   "license": "",

@@ -2,19 +2,9 @@
 
 Mantle Server SDK repository
 
-# IPFS setup
+# Examples
 
-- Install IPFS: https://ipfs.io/docs/install/
-
-- Ensure that you have initialized IPFS and have an IPFS daemon instance running before attempting query the IPFS module:
-
-    - `ipfs init`
-    - `ipfs daemon`
-
-### Examples
-
-
-**ipfs**
+### `ipfs`
 
 ```js
 const MantleServer = require('@appliedblockchain/mantle-server')
