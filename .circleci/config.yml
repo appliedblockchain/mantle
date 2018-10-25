@@ -1,5 +1,6 @@
 # TODO: Utilise workflows for parallel builds
 version: 2
+working_directory: ~/mantle
 
 references:
   install_awscli: &install_awscli
@@ -13,12 +14,16 @@ references:
       command: |
         aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
         aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+  generate_docs: &generate_docs
+    run:
+      name: Generate SDK docs
+      command: cd ~/mantle/sdk && npm i && npx esdoc
   deploy_to_s3: &deploy_to_s3
     run:
       name: Upload to S3
       command: |
         echo "Copying files to server..."
-        aws s3 sync _site/ "s3://$S3_BUCKET_NAME" --size-only --delete
+        aws s3 sync ~/mantle/sdk/docs "s3://$S3_BUCKET_NAME" --size-only --delete
 
 jobs:
   build:
@@ -34,7 +39,6 @@ jobs:
         username: $DOCKER_USER
         password: $DOCKER_PASSWORD
 
-    working_directory: ~/mantle
 
     steps:
       - checkout
@@ -100,3 +104,28 @@ jobs:
       - run:
           name: run server-sdk tests
           command: cd ~/mantle/server-sdk && npm test
+
+  upload_docs:
+    docker:
+      - image: circleci/python:3.6.3
+    environment:
+      S3_BUCKET_NAME: mantle-docs
+    steps:
+      - attach_workspace:
+          at: ./
+      - *install_awscli
+      - *add_aws_credentials
+      - *generate_docs
+      - *deploy_to_s3
+
+
+workflows:
+  version: 2
+  run_all:
+    jobs:
+      - build
+      - upload_docs
+      - confirm_upload:
+          type: approval
+          requires:
+            - upload_docs
