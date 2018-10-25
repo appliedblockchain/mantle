@@ -9,7 +9,8 @@
     "test": "jest",
     "circleci": "NODE_ENV=circleci jest",
     "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo",
-    "build": "./build.sh"
+    "build": "./build.sh",
+    "docs": "esdoc"
   },
   "repository": {
     "type": "git",

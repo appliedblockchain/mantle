@@ -16,15 +16,9 @@ references:
         aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
         aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
   generate_docs: &generate_docs
-    run: 
-      name: PWD
-      command: pwd
-    run: 
-      name: LS
-      command: ls
     run:
       name: Generate SDK docs
-      command: cd ~/mantle/sdk && npm i && npx esdoc
+      command: cd ~/mantle/sdk && ./node_modules/.bin/esdoc
   deploy_to_s3: &deploy_to_s3
     run:
       name: Upload to S3
@@ -47,8 +41,6 @@ jobs:
         username: $DOCKER_USER
         password: $DOCKER_PASSWORD
 
-
-    # working_directory: ~/mantle
 
     steps:
       - checkout
@@ -122,12 +114,24 @@ jobs:
     environment:
       S3_BUCKET_NAME: mantle-docs
     steps:
-      - attach_workspace:
-          at: ./
-      - *install_awscli
-      - *add_aws_credentials
-      - *generate_docs
-      - *deploy_to_s3
+      - run:
+          name: debugging
+          command: touch ~/mantle/debugging.txt
+      - run:
+          name: install_awscli
+          command: *install_awscli
+      - run:
+          name: add_aws_creds
+          command: *add_aws_credentials
+      - run:
+          name: generate_docs
+          command: *generate_docs
+      - run:
+          name: deploy_to_s3
+          command: *deploy_to_s3
+        # - *add_aws_credentials
+        # - *generate_docs
+        # - *deploy_to_s3
 
 
 workflows:
@@ -135,8 +139,7 @@ workflows:
   run_all:
     jobs:
       - build
-      - upload_docs
-      - confirm_upload:
-          type: approval
+      - upload_docs:
+          # type: approval
           requires:
-            - upload_docs
+            - build
