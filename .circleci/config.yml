@@ -1,6 +1,5 @@
 # TODO: Utilise workflows for parallel builds
 version: 2
-working_directory: ~/mantle
 
 references:
   install_awscli: &install_awscli
@@ -17,6 +16,7 @@ references:
   generate_docs: &generate_docs
     run:
       name: Generate SDK docs
+      working_directory: ~/mantle
       command: cd ~/mantle/sdk && npm i && npx esdoc
   deploy_to_s3: &deploy_to_s3
     run:
