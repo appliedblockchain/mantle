@@ -1,5 +1,25 @@
 # TODO: Utilise workflows for parallel builds
 version: 2
+
+references:
+  install_awscli: &install_awscli
+    run:
+      name: Install AWS CLI
+      command: |
+        sudo pip install awscli --upgrade
+  add_aws_credentials: &add_aws_credentials
+    run:
+      name: Set AWS Credentials
+      command: |
+        aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+        aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+  deploy_to_s3: &deploy_to_s3
+    run:
+      name: Upload to S3
+      command: |
+        echo "Copying files to server..."
+        aws s3 sync _site/ "s3://$S3_BUCKET_NAME" --size-only --delete
+
 jobs:
   build:
     docker:
