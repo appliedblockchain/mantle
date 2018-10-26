@@ -68,6 +68,11 @@ jobs:
           name: yarn install sdk
           command: cd ~/mantle/sdk && yarn install && npx esdoc
 
+      - persist_to_workspace:
+          root: mantle
+          paths:
+            - sdk/docs
+
       - run:
           name: yarn install api
           command: cd ~/mantle/api && yarn install
