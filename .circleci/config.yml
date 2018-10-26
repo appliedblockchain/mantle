@@ -129,6 +129,6 @@ workflows:
     jobs:
       - build
       - upload_docs:
-          type: approval
+          # type: approval
           requires:
             - build
