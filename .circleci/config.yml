@@ -110,12 +110,14 @@ jobs:
   upload_docs:
     <<: *defaults
     docker:
-      - image: circleci/python:3.6.3
-      - image: circleci/node:10.7
+      - image: circleci/node:latest
     environment:
       S3_BUCKET_NAME: mantle-docs
     steps:
       - checkout
+      - run:
+          name: add python
+          command: apk --update --no-cache add alpine-sdk git python curl bash && rm -rf /tmp/* /var/cache/apk/*
       - run:
           name: debugging
           command: touch ~/mantle/debugging.txt
