@@ -18,7 +18,7 @@ references:
   generate_docs: &generate_docs
     run:
       name: Generate SDK docs
-      command: cd sdk && npx esdoc
+      command: cd sdk && ./node_modules/.bin/esdoc
   deploy_to_s3: &deploy_to_s3
     run:
       name: Upload to S3
