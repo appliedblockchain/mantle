@@ -69,7 +69,7 @@ jobs:
           command: cd ~/mantle/sdk && yarn install && npx esdoc
 
       - persist_to_workspace:
-          root: mantle
+          root: ~/mantle
           paths:
             - sdk/docs
 
