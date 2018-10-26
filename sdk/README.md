@@ -2,11 +2,20 @@
 
 Mantle SDK repository
 
+### `Initialising a new Mantle instance:`
+
+`const mantle = new Mantle()`
+
+The mantle instance exposes methods to facilitate, amongst other things, mnemonic and HD public/private key generation, IPFS API access etc.
+
 ### `Configuring Mantle`
+
+Mantle accepts a configuration object on instantiation, as below:
+
 ```js
 const mantle = new Mantle({
   provider: 'http://localhost:8545', // parity address
-  proxyURL: 'http://localhost:3000/api', // proxy address for IPFS calls
+  proxyURL: 'http://localhost:3000/api', // proxy address for IPFS/Trx calls
   contracts: [ {
     name: 'foo',
     address: '0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe',
@@ -19,15 +28,9 @@ const mantle = new Mantle({
       inputs: [ { 'name': 'b', 'type': 'uint256' }, { 'name': 'c', 'type': 'bytes32' } ],
       outputs: [ { 'name': '', 'type': 'address' } ]
     } ]
-  } ] // contract interfaces
+  } ] // contract interfaces - automatically instantiated onto web3 if provided 
 })
 ```
-
-### `Initialising a new Mantle instance:`
-
-`const mantle = new Mantle()`
-
-The mantle instance exposes methods to facilitate, amongst other things, mnemonic and HD public/private key generation, IPFS API access etc.
 
 ### `Mnemonic generation`
 
