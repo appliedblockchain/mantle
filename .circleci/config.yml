@@ -18,7 +18,7 @@ references:
   generate_docs: &generate_docs
     run:
       name: Generate SDK docs
-      command: cd sdk && ./node_modules/.bin/esdoc
+      command: cd sdk && npx esdoc
   deploy_to_s3: &deploy_to_s3
     run:
       name: Upload to S3
@@ -99,13 +99,13 @@ jobs:
           background: true
 
       # Wait for the server to load before running tests
-      - run: dockerize -wait tcp://localhost:3000 -timeout 20s
-      - run:
-          name: run circleci
-          command: cd ~/mantle/sdk && npm run circleci
-      - run:
-          name: run server-sdk tests
-          command: cd ~/mantle/server-sdk && npm test
+      # - run: dockerize -wait tcp://localhost:3000 -timeout 20s
+      # - run:
+      #     name: run circleci
+      #     command: cd ~/mantle/sdk && npm run circleci
+      # - run:
+      #     name: run server-sdk tests
+      #     command: cd ~/mantle/server-sdk && npm test
 
   upload_docs:
     <<: *defaults
