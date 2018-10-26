@@ -18,7 +18,7 @@ references:
   generate_docs: &generate_docs
     run:
       name: Generate SDK docs
-      command: cd sdk && npm i && ./node_modules/.bin/esdoc
+      command: cd sdk && npm i && npx esdoc
   deploy_to_s3: &deploy_to_s3
     run:
       name: Upload to S3
@@ -66,7 +66,7 @@ jobs:
       
       - run:
           name: yarn install sdk
-          command: cd ~/mantle/sdk && yarn install
+          command: cd ~/mantle/sdk && yarn install && npx esdoc
 
       - run:
           name: yarn install api
@@ -110,7 +110,7 @@ jobs:
   upload_docs:
     <<: *defaults
     docker:
-      - image: circleci/node:10.7-alpine
+      - image: circleci/python:latest
     environment:
       S3_BUCKET_NAME: mantle-docs
     steps:
@@ -119,10 +119,14 @@ jobs:
           name: debugging
           command: touch ~/mantle/debugging.txt
 
-      - run:
-          name: install python with apk
-          command: apk --update --no-cache add alpine-sdk git python curl bash && rm -rf /tmp/* /var/cache/apk/*
-      # - run:
+      - attach_workspace:
+          at: ./
+      - *install_awscli
+      - *add_aws_credentials
+      # - *generate_docs
+      - *deploy_to_s3
+
+     # - run:
       #     name: Install AWS CLI
       #     command: |
       #       sudo pip install awscli --upgrade
@@ -139,13 +143,6 @@ jobs:
       #     command: |
       #       echo "Copying files to server..."
       #       aws s3 sync ~/mantle/sdk/docs "s3://$S3_BUCKET_NAME" --size-only --delete
-      - attach_workspace:
-          at: ./
-      - *install_awscli
-      - *add_aws_credentials
-      - *generate_docs
-      - *deploy_to_s3
-
 
 workflows:
   version: 2
