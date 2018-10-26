@@ -98,14 +98,14 @@ jobs:
           command: cd ~/mantle/api && npm run start
           background: true
 
-      # Wait for the server to load before running tests
-      # - run: dockerize -wait tcp://localhost:3000 -timeout 20s
-      # - run:
-      #     name: run circleci
-      #     command: cd ~/mantle/sdk && npm run circleci
-      # - run:
-      #     name: run server-sdk tests
-      #     command: cd ~/mantle/server-sdk && npm test
+      Wait for the server to load before running tests
+      - run: dockerize -wait tcp://localhost:3000 -timeout 20s
+      - run:
+          name: run circleci
+          command: cd ~/mantle/sdk && npm run circleci
+      - run:
+          name: run server-sdk tests
+          command: cd ~/mantle/server-sdk && npm test
 
   upload_docs:
     <<: *defaults
@@ -114,6 +114,7 @@ jobs:
     environment:
       S3_BUCKET_NAME: mantle-docs
     steps:
+      - checkout
       - run:
           name: debugging
           command: touch ~/mantle/debugging.txt
