@@ -3,28 +3,28 @@ version: 2
 defaults: &defaults
   working_directory: ~/mantle
 
-# references:
-#   install_awscli: &install_awscli
-#     run:
-#       name: Install AWS CLI
-#       command: |
-#         sudo pip install awscli --upgrade
-#   add_aws_credentials: &add_aws_credentials
-#     run:
-#       name: Set AWS Credentials
-#       command: |
-#         aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-#         aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-#   generate_docs: &generate_docs
-#     run:
-#       name: Generate SDK docs
-#       command: cd ~/mantle/sdk && ./node_modules/.bin/esdoc
-#   deploy_to_s3: &deploy_to_s3
-#     run:
-#       name: Upload to S3
-#       command: |
-#         echo "Copying files to server..."
-#         aws s3 sync ~/mantle/sdk/docs "s3://$S3_BUCKET_NAME" --size-only --delete
+references:
+  install_awscli: &install_awscli
+    run:
+      name: Install AWS CLI
+      command: |
+        sudo pip install awscli --upgrade
+  add_aws_credentials: &add_aws_credentials
+    run:
+      name: Set AWS Credentials
+      command: |
+        aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+        aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+  generate_docs: &generate_docs
+    run:
+      name: Generate SDK docs
+      command: cd sdk && ./node_modules/.bin/esdoc
+  deploy_to_s3: &deploy_to_s3
+    run:
+      name: Upload to S3
+      command: |
+        echo "Copying files to server..."
+        aws s3 sync sdk/docs "s3://$S3_BUCKET_NAME" --size-only --delete
 
 jobs:
   build:
@@ -117,29 +117,29 @@ jobs:
       - run:
           name: debugging
           command: touch ~/mantle/debugging.txt
-      - run:
-          name: Install AWS CLI
-          command: |
-            sudo pip install awscli --upgrade
-      - run:
-          name: Set AWS Credentials
-          command: |
-            aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-            aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-      - run:
-          name: Generate SDK docs
-          command: cd ~/mantle/sdk && ./node_modules/.bin/esdoc
-      - run:
-          name: Upload to S3
-          command: |
-            echo "Copying files to server..."
-            aws s3 sync ~/mantle/sdk/docs "s3://$S3_BUCKET_NAME" --size-only --delete
-      # - attach_workspace:
-      #     at: ./
-      # - *install_awscli
-      # - *add_aws_credentials
-      # - *generate_docs
-      # - *deploy_to_s3
+      # - run:
+      #     name: Install AWS CLI
+      #     command: |
+      #       sudo pip install awscli --upgrade
+      # - run:
+      #     name: Set AWS Credentials
+      #     command: |
+      #       aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+      #       aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+      # - run:
+      #     name: Generate SDK docs
+      #     command: cd ~/mantle/sdk && ./node_modules/.bin/esdoc
+      # - run:
+      #     name: Upload to S3
+      #     command: |
+      #       echo "Copying files to server..."
+      #       aws s3 sync ~/mantle/sdk/docs "s3://$S3_BUCKET_NAME" --size-only --delete
+      - attach_workspace:
+          at: ./
+      - *install_awscli
+      - *add_aws_credentials
+      - *generate_docs
+      - *deploy_to_s3
 
 
 workflows:
