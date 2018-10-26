@@ -18,7 +18,7 @@ references:
   generate_docs: &generate_docs
     run:
       name: Generate SDK docs
-      command: cd sdk && ./node_modules/.bin/esdoc
+      command: cd sdk && npx esdoc
   deploy_to_s3: &deploy_to_s3
     run:
       name: Upload to S3
@@ -111,6 +111,7 @@ jobs:
     <<: *defaults
     docker:
       - image: circleci/python:3.6.3
+      - image: circleci/node:10.7
     environment:
       S3_BUCKET_NAME: mantle-docs
     steps:
