@@ -5,7 +5,6 @@
   "description": "Mantle is a blockchain SDK targeting Ethereum and Hyperledger Fabric",
   "main": "src/mantle.js",
   "scripts": {
-    "start": "node src/api/server.js",
     "test": "jest",
     "circleci": "NODE_ENV=circleci jest",
     "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo",

@@ -4,8 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo"
   },
   "author": "",
   "license": "GPL-3.0-or-later",

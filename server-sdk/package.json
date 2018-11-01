@@ -5,7 +5,9 @@
   "description": "",
   "main": "src/mantle.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo",
+    "build": "./build.sh"
   },
   "author": "appliedblockchain",
   "license": "",
