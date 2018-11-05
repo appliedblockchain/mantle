@@ -1,8 +1,29 @@
 const koaRouter = require('koa-joi-router')
-const routes = require('./routes')
+const ipfs = require('./routes/ipfs')
+const transactions = require('./routes/transactions')
 
-const router = koaRouter()
-router.route(routes)
-router.prefix('/api')
+function _createRouter(middleware, routes) {
+  const router = koaRouter()
 
-module.exports = router
+  router.use(middleware)
+  router.route(routes)
+
+  return router
+}
+
+const createIpfsRouter = ipfsApiOptions =>
+  _createRouter(ipfs.decorateCtx(ipfsApiOptions), ipfs.routes)
+
+const createTransactionsRouter = web3Options =>
+  _createRouter(transactions.decorateCtx(web3Options), transactions.routes)
+
+module.exports = {
+  ipfs: {
+    createRouter: createIpfsRouter,
+    ...ipfs
+  },
+  transactions: {
+    createRouter: createTransactionsRouter,
+    ...transactions
+  }
+}
