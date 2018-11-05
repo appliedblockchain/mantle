@@ -1,28 +1,32 @@
-const Koa = require('koa')
-const cors = require('@koa/cors')
-const compress = require('koa-compress')
-const respond = require('koa-respond')
-const bodyParser = require('koa-bodyparser')
-const router = require('./router')
-const Web3 = require('web3')
-const { assignToKoaContext, errorHandler, notFoundHandler } = require('./middleware')
+module.exports = ({ ipfsApiOptions = process.env.IPFS_HOST, web3Options = process.env.PARITY_HOST, port = process.env.PORT || 3000 } = {}) => {
+  const Koa = require('koa')
+  const cors = require('@koa/cors')
+  const compress = require('koa-compress')
+  const respond = require('koa-respond')
+  const { ipfs, transactions } = require('./router')
+  const { errorHandler, notFoundHandler } = require('./middleware')
 
-const web3 = new Web3(process.env.PARITY_HOST || 'http://localhost:8545')
+  const app = new Koa()
 
-const app = new Koa()
+  app
+    .use(errorHandler)
+    .use(compress())
+    .use(respond())
+    .use(cors())
+    .use(
+      ipfs.createRouter(ipfsApiOptions)
+        .prefix('/api/ipfs')
+        .middleware()
+    )
+    .use(
+      transactions.createRouter(web3Options)
+        .prefix('/api')
+        .middleware()
+    )
+    .use(notFoundHandler)
+    .listen(port, () => {
+      console.log(`Server listening on port ${port}`)
+    })
 
-app
-  .use(assignToKoaContext({ web3 }))
-  .use(errorHandler)
-  .use(compress())
-  .use(respond())
-  .use(cors())
-  .use(router.middleware())
-  .use(bodyParser())
-  .use(notFoundHandler)
-
-const port = process.env.PORT || 3000
-
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`)
-})
+  return app
+}

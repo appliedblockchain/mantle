@@ -3,7 +3,16 @@ const Joi = router.Joi
 
 const ADDRESS_REGEX = /^0x[a-f0-9]{40}$/i
 
-module.exports = [
+const decorateCtx = (web3Options = 'http://localhost:8545') => {
+  const Web3 = require('web3')
+
+  return async (ctx, next) => {
+    ctx.web3 = new Web3(web3Options)
+    await next()
+  }
+}
+
+const routes = [
   {
     method: 'post',
     path: '/tx',
@@ -21,3 +30,8 @@ module.exports = [
     }
   }
 ]
+
+module.exports = {
+  decorateCtx,
+  routes
+}
