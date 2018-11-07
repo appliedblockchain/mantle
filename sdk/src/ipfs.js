@@ -36,7 +36,7 @@ class IPFS {
    * @return {void}
    */
   async remove(hash) {
-    await this.axios.delete(`${hash}/delete`)
+    await this.axios.delete(`delete/${hash}`)
   }
 
   /**

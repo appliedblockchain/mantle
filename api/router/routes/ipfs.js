@@ -36,7 +36,7 @@ module.exports = [
   },
   {
     method: 'delete',
-    path: '/ipfs/:hash/delete',
+    path: '/ipfs/delete/:hash',
     handler: async ctx => {
       // TODO: Authenticate deletion requests
       const { hash } = ctx.request.params
