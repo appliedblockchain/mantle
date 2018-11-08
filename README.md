@@ -33,18 +33,20 @@ README: https://github.com/appliedblockchain/mantle/blob/master/api/README.md
 
 # Publication / Obfuscation
 
-We publish an obfuscated version of our source code to npm when using Mantle in client solutions (although an unobfuscatd version of the *sdk* code is available under the package name `@appliedblockchain/mantle`, whereas the client version is `@appliedblockchain/mantle-core`. Both the *sdk* and
-*server-sdk* repository contain build scripts that can be used to produce a *dist* folder with obfuscated code.
+We publish an uglified version of our source code to npm when using Mantle in client solutions (although an un-uglified version of the *sdk* code is available under the package name `@appliedblockchain/mantle`, whereas the client version is `@appliedblockchain/mantle-core`. Both the *sdk* and
+*server-sdk* repository contain build scripts that can be used to produce a *dist* folder with uglified code.
 
 To run:
 
 - `cd` to the directory you wish to publish, e.g. `cd /mantle/sdk`
+- Update npm version, i.e. `npm version patch`, `npm version minor`, `npm version major`
 - Build the dist folder:
   > `npm run build`
 - Publish:
   > `cd /mantle/sdk/dist`
 
-  > `npm publish` (ensure that any necessary version changes have been made before doing so)
+  > `npm publish`
+- Commit package.json version changes to master
 
 # Local testing
 
