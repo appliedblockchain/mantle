@@ -53,7 +53,7 @@ To run:
 - Install and initialize IPFS ([see IPFS setup section](#ipfs-setup))
 - Run the IPFS daemon inside a shell:
   > `ipfs daemon`
-- Load the api server to handle proxied requests: 
+- Load the api server to handle proxied requests:
   > `cd path/to/api`
 
   > `npm run start`
@@ -80,3 +80,9 @@ Esdoc generation is available for the sdk:
 # Technical Specification
 
 Please check the documentation created in this repo: https://github.com/appliedblockchain/mantle-intro-doc
+
+# FAQs
+
+Frequently asked questions:
+
+https://github.com/appliedblockchain/mantle/blob/master/README.md
