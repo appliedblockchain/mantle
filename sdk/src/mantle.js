@@ -62,7 +62,7 @@ class Mantle {
     const nonce = await this.web3.eth.getTransactionCount(this.address)
 
     const tx = {
-      gasPrice: '0',
+      gasPrice: this.config.ethereum.sendParams.gasPrice,
       gas: '50000000',
       nonce: options.nonce || nonce,
       chainId: options.chainId,
