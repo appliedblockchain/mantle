@@ -1,48 +1,73 @@
-const ipfsAPI = require('ipfs-api')
-const ipfs = ipfsAPI(process.env.IPFS_HOST || '127.0.0.1')
+/** @module mantle/api/router/routes/ipfs */
 
-module.exports = [
+/**
+ * Creates a koa middleware function that adds an instance of ipfs-api to the context
+ * @func module:mantle/api/router/routes/ipfs#decorateCtx
+ * @param {Object|String} ipfsApiOptions This will be used to instantiate a new instance of ipfs-api
+ * @return {Function} Koa middleware
+ * @see https://koajs.com/
+ * @see https://www.npmjs.com/package/ipfs-api
+ */
+const decorateCtx = (ipfsApiOptions = '127.0.0.1') => {
+  const ipfsAPI = require('ipfs-api')
+
+  return async (ctx, next) => {
+    ctx.ipfs = ipfsAPI(ipfsApiOptions)
+    await next()
+  }
+}
+
+/**
+ * List of ipfs route definitions
+ * @const {Array.<Object>} module:mantle/api/router/routes/ipfs#routes
+ */
+const routes = [
   {
     method: 'get',
-    path: '/ipfs/pin/:hash',
+    path: '/pin/:hash',
     handler: async ctx => {
       const { hash } = ctx.request.params
-      const retrievedPin = await ipfs.pin.ls(hash)
+      const retrievedPin = await ctx.ipfs.pin.ls(hash)
       ctx.body = retrievedPin
     }
   },
   {
     method: 'get',
-    path: '/ipfs/:hash',
+    path: '/:hash',
     handler: async ctx => {
       const { hash } = ctx.request.params
-      const retrieved = await ipfs.files.cat(hash)
+      const retrieved = await ctx.ipfs.files.cat(hash)
       ctx.body = retrieved
     }
   },
   {
     method: 'post',
-    path: '/ipfs/store',
+    path: '/store',
     validate: {
       type: 'json'
     },
     handler: async ctx => {
       const { data } = ctx.request.body
-      const [ storedData ] = await ipfs.add(Buffer.from(data))
+      const [ storedData ] = await ctx.ipfs.add(Buffer.from(data))
       const { hash } = storedData
-      await ipfs.pin.add(hash)
+      await ctx.ipfs.pin.add(hash)
       ctx.body = hash
     }
   },
   {
     method: 'delete',
-    path: '/ipfs/:hash/delete',
+    path: '/delete/:hash',
     handler: async ctx => {
       // TODO: Authenticate deletion requests
       const { hash } = ctx.request.params
-      await ipfs.pin.rm(hash)
-      await ipfs.repo.gc()
-      ctx.ok()
+      await ctx.ipfs.pin.rm(hash)
+      await ctx.ipfs.repo.gc()
+      ctx.status = 204
     }
   }
 ]
+
+module.exports = {
+  decorateCtx,
+  routes
+}
