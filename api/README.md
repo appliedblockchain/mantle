@@ -4,10 +4,8 @@ Mantle API repository
 
 ### `Setup`
 
-The API will run on port `3000` by default and all routes are prefixed by `/api`.
+Install dependencies with `npm install`
 
-> `npm install`
+An instance of the default server can be run with `npm start`; It listens on port `3000` by default and all routes are prefixed by `/api`.
 
-> `npm start`
-
-The application will now be accessible at `http://localhost:3000/api/<route-params>`
+Alternatively it can be used as a dependency in other projects; See [Usage.md](Usage.md)
