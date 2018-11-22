@@ -6,7 +6,9 @@
   "scripts": {
     "docs": "jsdoc --readme Usage.md *.js --destination docs --recurse router",
     "start": "node run.js",
-    "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo"
+    "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo",
+    "ipfs": "docker run -p 5001:5001 appliedblockchain/ipfs-solo",
+    "docker": "npm run parity & npm run ipfs"
   },
   "author": "",
   "license": "GPL-3.0-or-later",
