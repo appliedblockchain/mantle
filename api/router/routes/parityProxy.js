@@ -1,4 +1,4 @@
-/** @module mantle/api/router/routes/transactions */
+/** @module mantle/api/router/routes/parityProxy */
 
 const router = require('koa-joi-router')
 const Joi = router.Joi
@@ -7,7 +7,7 @@ const ADDRESS_REGEX = /^0x[a-f0-9]{40}$/i
 
 /**
  * Creates a koa middleware function that adds an instance of web3 to the context
- * @func module:mantle/api/router/routes/transactions#decorateCtx
+ * @func module:mantle/api/router/routes/parityProxy#decorateCtx
  * @param {Object|String} web3Options This will be used to instantiate a new instance of web3
  * @return {Function} Koa middleware
  * @see https://koajs.com/
@@ -25,8 +25,8 @@ const decorateCtx = (web3Options = 'http://localhost:8545') => {
 let chainId
 
 /**
- * List of transactions route definitions
- * @const {Array.<Object>} module:mantle/api/router/routes/transactions#routes
+ * List of parityProxy route definitions
+ * @const {Array.<Object>} module:mantle/api/router/routes/parityProxy#routes
  */
 const routes = [
   {

@@ -34,13 +34,13 @@ const createIpfsRouter = ipfsApiOptions =>
   _createRouter(ipfs.decorateCtx(ipfsApiOptions), ipfs.routes)
 
 /**
- * Creates a new joi-router using the transactions decorateCtx middleware and routes
- * @func module:mantle/api/router.transactions#createRouter
- * @param {String|Object} web3Options Passed to {@link module:mantle/api/router/routes/transactions#decorateCtx}
+ * Creates a new joi-router using the parityProxy decorateCtx middleware and routes
+ * @func module:mantle/api/router.parityProxy#createRouter
+ * @param {String|Object} web3Options Passed to {@link module:mantle/api/router/routes/parityProxy#decorateCtx}
  * @return {Object} joi-router instance
  * @see module:mantle/api/router~_createRouter
- * @see module:mantle/api/router/routes/transactions#decorateCtx
- * @see module:mantle/api/router/routes/transactions#routes
+ * @see module:mantle/api/router/routes/parityProxy#decorateCtx
+ * @see module:mantle/api/router/routes/parityProxy#routes
  */
 const createParityProxyRouter = web3Options =>
   _createRouter(parityProxy.decorateCtx(web3Options), parityProxy.routes)
@@ -64,12 +64,12 @@ module.exports = {
   parityProxy: {
     createRouter: createParityProxyRouter,
     /**
-     * @func module:mantle/api/router.transactions#decorateCtx
-     * @see module:mantle/api/router/routes/transactions#decorateCtx
+     * @func module:mantle/api/router.parityProxy#decorateCtx
+     * @see module:mantle/api/router/routes/parityProxy#decorateCtx
      */
     /**
-     * @const {Array.<Object>} module:mantle/api/router.transactions#routes
-     * @see module:mantle/api/router/routes/transactions#routes
+     * @const {Array.<Object>} module:mantle/api/router.parityProxy#routes
+     * @see module:mantle/api/router/routes/parityProxy#routes
      */
     ...parityProxy
   }
