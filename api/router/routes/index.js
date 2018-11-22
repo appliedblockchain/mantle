@@ -1,7 +1,7 @@
-const transactions = require('./transactions')
+const parityProxy = require('./parityProxy.js')
 const ipfs = require('./ipfs')
 
 module.exports = [
-  ...transactions,
+  ...parityProxy,
   ...ipfs
 ]
