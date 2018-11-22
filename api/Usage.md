@@ -11,7 +11,7 @@ The main export object takes the following format:
     decorateCtx: Function.<Function>,
     routes: Array.<Object>
   },
-  transactions: {
+  parityProxy: {
     createRouter: Function.<joi-router>,
     decorateCtx: Function.<Function>,
     routes: Array.<Object>
@@ -20,25 +20,25 @@ The main export object takes the following format:
 ```
 
 A brief overview of the available functions/properties:
-- `createServer` will create and start a generic [Koa] instance that includes all the routes from the `ipfs` and `transactions` routers.
-- `ipfs.decorateCtx` and `transactions.decorateCtx` are functions that create [Koa] middleware that add properties to the [Koa] context; These properties need to be present on the context for their respective routes to function correctly.
-- `ipfs.routes` and `transactions.routes` are lists of [joi-router] route definitions.
-- `ipfs.createRouter` and `transactions.createRouter` will create [joi-router]s that use the middleware and routes defined above.
+- `createServer` will create and start a generic [Koa] instance that includes all the routes from the `ipfs` and `parityProxy` routers.
+- `ipfs.decorateCtx` and `parityProxy.decorateCtx` are functions that create [Koa] middleware that add properties to the [Koa] context; These properties need to be present on the context for their respective routes to function correctly.
+- `ipfs.routes` and `parityProxy.routes` are lists of [joi-router] route definitions.
+- `ipfs.createRouter` and `parityProxy.createRouter` will create [joi-router]s that use the middleware and routes defined above.
 
 If one wishes to make use of the default routes within one's own [Koa] application then an easy way to do so is to create all of the available routers and then obtain middleware from them via their `middleware` functions, i.e.
 ```js
-const { ipfs, transactions } = require('@appliedblockchain/mantle-api')
+const { ipfs, parityProxy } = require('@appliedblockchain/mantle-api')
 
 const ipfsRouter = ipfs.createRouter()
-const transactionsRouter = transactions.createRouter()
+const parityProxyRouter = parityProxy.createRouter()
 
 // it is recommended to prefix the router paths, but not mandatory
 ipfsRouter.prefix('/ipfs')
-transactionsRouter.prefix('/transactions')
+parityProxyRouter.prefix('/parityProxy')
 
 const app = new Koa()
   .use(ipfsRouter.middleware())
-  .use(transactionsRouter.middleware())
+  .use(parityProxyRouter.middleware())
 ```
 
 

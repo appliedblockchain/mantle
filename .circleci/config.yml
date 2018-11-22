@@ -37,7 +37,7 @@ jobs:
           - v1-server-sdk-{{ checksum "server-sdk/package.json" }}
           # Fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-      
+
       - run:
           name: yarn install sdk
           command: cd ~/mantle/sdk && yarn install
@@ -45,7 +45,7 @@ jobs:
       - run:
           name: yarn install api
           command: cd ~/mantle/api && yarn install
-    
+
       - run:
           name: yarn install server-sdk
           command: cd ~/mantle/server-sdk && yarn install
@@ -54,7 +54,7 @@ jobs:
           key: v1-api-{{ checksum "api/package.json" }}
           paths:
             - /api/node_modules
-      
+
       - save_cache:
           key: v1-sdk-{{ checksum "sdk/package.json" }}
           paths:
@@ -64,7 +64,7 @@ jobs:
           key: v1-server-sdk-{{ checksum "server-sdk/package.json" }}
           paths:
             - /server-sdk/node_modules
-    
+
       - setup_remote_docker
 
       - run:
@@ -77,6 +77,9 @@ jobs:
       - run:
           name: run circleci
           command: cd ~/mantle/sdk && npm run circleci
+      - run:
+          name: run circleci integration tests
+          command: cd ~/mantle/sdk && node bin/deployTestToken.js && source exportTestAddresses.sh && npm run circleci-integration
       - run:
           name: run server-sdk tests
           command: cd ~/mantle/server-sdk && npm test

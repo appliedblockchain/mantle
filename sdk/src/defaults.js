@@ -12,6 +12,11 @@ module.exports = {
       gasPrice: '0'
     }
   },
+  tokens: {
+    ERC20: [
+      // { name: 'TokenName', address: '0x0'}
+    ]
+  },
   contracts: [],
   servers: [],
   provider: 'http://localhost:8545',

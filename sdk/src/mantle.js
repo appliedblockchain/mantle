@@ -22,12 +22,14 @@ class Mantle {
       throw err
     }
 
+    this.tokens = {}
     this.contracts = {}
     this.keysLoaded = false
     this.ipfs = new IPFS(this.config)
 
     this.setupWeb3Provider()
     this.loadContracts(this.config.contracts)
+    this.loadTokens(this.config.tokens.ERC20)
 
     this.axios = axios.create({
       baseURL: this.config.proxyURL,
@@ -49,7 +51,7 @@ class Mantle {
       throw new Error('Cannot sign and send transaction: account has not been loaded')
     }
 
-    const contract = this.contracts[options.contractName]
+    const contract = this.contracts[options.contractName] || this.tokens[options.contractName || options.tokenName]
     if (!contract) {
       throw new Error(`Cannot sign and send transaction: no contract exists with name ${options.contractName}`)
     }
@@ -58,17 +60,16 @@ class Mantle {
       throw new Error(`Cannot sign and send transaction: no method ${options.methodName} exists for contract ${options.contractName}`)
     }
 
-    // TODO: Proxy request
-    const nonce = await this.web3.eth.getTransactionCount(this.address)
-
     const tx = {
       gasPrice: this.config.ethereum.sendParams.gasPrice,
       gas: '50000000',
-      nonce: options.nonce || nonce,
-      chainId: options.chainId,
+      nonce: options.nonce || (await this.axios.get(`/nonce/${this.address}`)).data,
+      chainId: options.chainId || this.chainId || await this.axios.get('/chainId').data,
       to: contract.options.address,
       data: contract.methods[options.methodName](...options.params).encodeABI()
     }
+
+    this.chainId = tx.chainId
 
     const { rawTransaction } = await this.web3.eth.accounts.signTransaction(tx, this.getPrivateKey('hex0x'))
     return rawTransaction
@@ -81,6 +82,26 @@ class Mantle {
   async sendSignedTransaction(rawTransaction) {
     const { data: receipt } = await this.axios.post('/tx', { rawTransaction, address: this.address })
     return abiDecoder.decodeLogs(receipt.logs)
+  }
+
+  async call(options) {
+    const contract = this.contracts[options.contractName] || this.tokens[options.contractName]
+    if (!contract) {
+      throw new Error(`Cannot call contract: no contract exists with name ${options.contractName}`)
+    }
+
+    if (!contract.methods[options.methodName]) {
+      throw new Error(`Cannot call contract: no method ${options.methodName} exists for contract ${options.contractName}`)
+    }
+
+    const result = await this.axios.post('/call', {
+      address: contract.options.address,
+      abi: contract.options.jsonInterface,
+      methodName: options.methodName,
+      params: options.params
+    })
+
+    return result.data
   }
 
   /**
@@ -127,6 +148,81 @@ class Mantle {
 
     this.contracts[contract.name] = new Contract(this.web3, contract)
     return this.contracts[contract.name]
+  }
+
+  /**
+   * @param  {array} tokens
+   * @return {void}
+   */
+  loadTokens(tokens) {
+    tokens.forEach(token => this.loadToken(token))
+  }
+
+  /**
+   * Generate a Contract instance and attach it to our
+   * contracts object using a unique Contract name as the key
+   * @param  {object} token
+   * @param  {string} token.name The token name
+   * @param  {string} token.address The token address
+   * @param  {string} token.abi The token abi, optional since mantle contain a default ERC20 token
+   * @return {void}
+   */
+  loadToken(token) {
+    if (!token.name) {
+      throw errors.noTokenName()
+    }
+
+    if (!token.address) {
+      throw errors.noTokenAddress()
+    }
+
+    let isDefault = false // First loaded token will be set as the default token
+    if (Object.keys(this.tokens).length === 0) {
+      isDefault = true
+    }
+
+    const abi = token.abi || this._getERC20Abi()
+    const tokenContract = new Contract(this.web3, { abi, address: token.address })
+    this.tokens[token.name] = tokenContract.methods
+
+    this.tokens[token.name].sendTokens = async (address, amount) => {
+      this.tokens[token.name].transfer(address, amount)
+      const rawTransaction = await this.signTransaction({
+        contractName: token.name,
+        methodName: 'transfer',
+        params: [ address, amount ]
+      })
+
+      return this.sendSignedTransaction(rawTransaction)
+    }
+
+    this.tokens[token.name].getBalance = (address = this.address) => {
+      const balance = this.call({
+        contractName: token.name,
+        methodName: 'balanceOf',
+        params: [ address ]
+      })
+
+      return balance
+    }
+
+    this.contracts[token.name] = tokenContract
+
+    if (isDefault) {
+      this.getBalance = this.tokens[token.name].getBalance
+      this.sendTokens = this.tokens[token.name].sendTokens
+      this.defaultToken = this.tokens[token.name]
+
+      abiDecoder.addABI(abi)
+    }
+  }
+
+  _getERC20Abi() {
+    const contractsJson = require('./contracts/ERC20.json').contracts
+
+    const key = 'contracts/ERC20Custom.sol:ERC20Custom'
+
+    return JSON.parse(contractsJson[key].abi)
   }
 
   /**

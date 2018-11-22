@@ -15,7 +15,7 @@ module.exports = ({ ipfsApiOptions = process.env.IPFS_HOST, web3Options = proces
   const cors = require('@koa/cors')
   const compress = require('koa-compress')
   const respond = require('koa-respond')
-  const { ipfs, transactions } = require('./router')
+  const { ipfs, parityProxy } = require('./router')
   const { errorHandler, notFoundHandler } = require('./middleware')
 
   const app = new Koa()
@@ -31,7 +31,7 @@ module.exports = ({ ipfsApiOptions = process.env.IPFS_HOST, web3Options = proces
         .middleware()
     )
     .use(
-      transactions.createRouter(web3Options)
+      parityProxy.createRouter(web3Options)
         .prefix('/api')
         .middleware()
     )

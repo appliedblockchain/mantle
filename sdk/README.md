@@ -28,7 +28,12 @@ const mantle = new Mantle({
       inputs: [ { 'name': 'b', 'type': 'uint256' }, { 'name': 'c', 'type': 'bytes32' } ],
       outputs: [ { 'name': '', 'type': 'address' } ]
     } ]
-  } ] // contract interfaces - automatically instantiated onto web3 if provided 
+  } ] // contract interfaces - automatically instantiated onto web3 if provided
+  tokens: {
+    ERC20: [
+      { name: 'TokenName', address: '0x...'} // Will use the default ERC20 abi present in mantle, but a custom abi can be passed here as well
+    ]
+  },
 })
 ```
 
@@ -79,3 +84,10 @@ const encrypted = Mantle.encryptSymmetric(data, secret) // Returns a Buffer
 
 const decrypted = Mantle.decryptSymmetric(encrypted, secret) // 'foo'
 ```
+
+### `Tokens`
+
+If your config define one or multiple tokens they will be loaded automatically. The first token will become the defaultToken accessible via `mantle.defaultToken`. Other tokens can be access via `mantle.tokens.TokenName`.
+
+
+Each tokens also has two convenience methods: `getBalance(address)` with address defaulting to mantle.address and `sendTokens(address, amount)`. The default token getBalance and sendTokens methods are also aliased directly to `mantle.getBalance()` and `mantle.sendTokens(...)`.
