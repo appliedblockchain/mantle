@@ -162,6 +162,9 @@ class Mantle {
    * Generate a Contract instance and attach it to our
    * contracts object using a unique Contract name as the key
    * @param  {object} token
+   * @param  {string} token.name The token name
+   * @param  {string} token.address The token address
+   * @param  {string} token.abi The token abi, optional since mantle contain a default ERC20 token
    * @return {void}
    */
   loadToken(token) {
@@ -178,7 +181,7 @@ class Mantle {
       isDefault = true
     }
 
-    const abi = this._getERC20Abi()
+    const abi = token.abi || this._getERC20Abi()
     const tokenContract = new Contract(this.web3, { abi, address: token.address })
     this.tokens[token.name] = tokenContract.methods
 
