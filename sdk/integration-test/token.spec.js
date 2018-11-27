@@ -1,26 +1,31 @@
 const Mantle = require('../src/mantle')
 const testMnemonic = 'unfold layer they talent toast duck share midnight century glue zero mad'
 
+let mantle
+
 describe('Tokens', () => {
-  let address, name
+  const tokenAddress = process.env.MYTOKEN_ADDRESS
+  const receiverAddress = process.env.RECEIVER_ADDRESS
+  const name = 'MyToken'
 
   beforeAll(() => {
-    address = process.env.MYTOKEN_ADDRESS
-    name = 'MyToken'
-
-  })
-
-  test('Can send tokens and check balances', async () => {
-    const mantle = new Mantle({
+    mantle = new Mantle({
       tokens: {
         ERC20: [
-          { name, address }
+          { name, address: tokenAddress }
         ]
       }
     })
 
-    expect(mantle.tokens.MyToken).toBeDefined()
     mantle.loadMnemonic(testMnemonic)
+
+  })
+
+  test('Can send tokens and check balances', async () => {
+
+
+    expect(mantle.tokens.MyToken).toBeDefined()
+
 
     const balance = await mantle.getBalance()
     const toSend = 1
@@ -29,5 +34,22 @@ describe('Tokens', () => {
     expect(events[0].name).toEqual('Transfer')
 
     expect(await mantle.getBalance()).toEqual(balance - toSend)
+  })
+
+  test('Can call transferAndCall to transfer tokens to a contract', async () => {
+    const receiverBalance = await mantle.getBalance(receiverAddress)
+
+
+    const toSend = 1
+    const data = 'PassedData'
+
+    const events = await mantle.sendTokensAndCall(receiverAddress, toSend, data)
+
+    expect(events[0].name).toEqual('Transfer')
+    expect(mantle.web3.utils.toAscii(events[0].events[3].value)).toEqual(data)
+
+    const newReceiverBalance = await mantle.getBalance(receiverAddress)
+
+    expect(newReceiverBalance).toEqual(receiverBalance + toSend)
   })
 })

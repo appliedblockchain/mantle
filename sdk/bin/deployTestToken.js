@@ -6,8 +6,8 @@ const Web3 = require('web3')
 const assert = require('assert')
 
 
-function getERC20AbiAndBytecode() {
-  const erc20Path = join(__dirname, '../src/contracts/ERC20.json')
+function getAbiAndBytecode(contractName) {
+  const erc20Path = join(__dirname, '../src/contracts/contracts.json')
   if (!fs.existsSync(erc20Path)) {
     console.error('Missing built contracts, to build them run \'npm run build\'')
     process.exit(1)
@@ -15,7 +15,7 @@ function getERC20AbiAndBytecode() {
 
   const contractsJson = require(erc20Path).contracts
 
-  const key = 'contracts/ERC20Custom.sol:ERC20Custom'
+  const key = `contracts/${contractName}.sol:${contractName}`
 
   const abi = JSON.parse(contractsJson[key].abi)
 
@@ -41,11 +41,13 @@ const testAddress = '0x46f76a759A2997a8caF9428E561792D1eb2AaE8a'
   const web3 = new Web3(new Web3.providers.HttpProvider(process.env.PROVIDER || 'http://localhost:8545'))
 
   try {
-    const [ abi, bytecode ] = getERC20AbiAndBytecode()
-    // console.log(bytecode)
+    let [ abi, bytecode ] = getAbiAndBytecode('ERC20Custom')
     let MyToken = new web3.eth.Contract(abi, { from, data: bytecode })
     MyToken = await MyToken.deploy({ data: bytecode, arguments: [ 'MyToken', 'MT', 1, totalSupply ] }).send(sendParams)
 
+    ;([ abi, bytecode ] = getAbiAndBytecode('ERC677ReceiverTest'))
+    let Receiver = new web3.eth.Contract(abi, { from, data: bytecode })
+    Receiver = await Receiver.deploy({ data: bytecode, arguments: [ MyToken.options.address ] }).send(sendParams)
 
     await MyToken.methods.transfer(testAddress, 1000).send(sendParams)
 
@@ -53,6 +55,7 @@ const testAddress = '0x46f76a759A2997a8caF9428E561792D1eb2AaE8a'
 
     const addresses = `
 export MYTOKEN_ADDRESS="${MyToken.options.address}"
+export RECEIVER_ADDRESS="${Receiver.options.address}"
 `
 
     const path = join(__dirname, '..', 'exportTestAddresses.sh')

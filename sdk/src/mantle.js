@@ -196,6 +196,16 @@ class Mantle {
       return this.sendSignedTransaction(rawTransaction)
     }
 
+    this.tokens[token.name].sendTokensAndCall = async (address, amount, data) => {
+      const rawTransaction = await this.signTransaction({
+        contractName: token.name,
+        methodName: 'transferAndCall',
+        params: [ address, amount, this.web3.utils.fromAscii(data) ]
+      })
+
+      return this.sendSignedTransaction(rawTransaction)
+    }
+
     this.tokens[token.name].getBalance = (address = this.address) => {
       const balance = this.call({
         contractName: token.name,
@@ -211,6 +221,7 @@ class Mantle {
     if (isDefault) {
       this.getBalance = this.tokens[token.name].getBalance
       this.sendTokens = this.tokens[token.name].sendTokens
+      this.sendTokensAndCall = this.tokens[token.name].sendTokensAndCall
       this.defaultToken = this.tokens[token.name]
 
       abiDecoder.addABI(abi)
@@ -218,7 +229,7 @@ class Mantle {
   }
 
   _getERC20Abi() {
-    const contractsJson = require('./contracts/ERC20.json').contracts
+    const contractsJson = require('./contracts/contracts.json').contracts
 
     const key = 'contracts/ERC20Custom.sol:ERC20Custom'
 
