@@ -26,4 +26,18 @@ describe('Tokens', () => {
     expect(mantle.sendTokens).toEqual(mantle.tokens.MyToken.sendTokens)
     expect(mantle.getBalance).toEqual(mantle.tokens.MyToken.getBalance)
   })
+
+  test('exposes call and send methods to contract functions defined by the abi', async () => {
+    const mantle = new Mantle({})
+
+    mantle.loadToken({ name, address })
+
+    expect(mantle.tokens.MyToken).toBeDefined()
+    expect(mantle.tokens.MyToken.getBalance).toBeDefined()
+    expect(mantle.tokens.MyToken.sendTokens).toBeDefined()
+
+    expect(mantle.tokens.MyToken).toEqual(mantle.defaultToken)
+    expect(mantle.sendTokens).toEqual(mantle.tokens.MyToken.sendTokens)
+    expect(mantle.getBalance).toEqual(mantle.tokens.MyToken.getBalance)
+  })
 })

@@ -24,7 +24,14 @@ function minifyDirectory(minifyPath, buildDirectory) {
       }
 
       const code = fs.readFileSync(filePath, 'utf8')
-      const { code: minified } = UglifyJS.minify(code)
+
+      let minified
+      if (filePath.endsWith('.js')) {
+        ({ code: minified } = UglifyJS.minify(code))
+      } else {
+        minified = code
+      }
+
       const writePath = minifyPath.replace('/src', buildDirectory) + '/' + file
       fs.writeFileSync(writePath, minified, { encoding: 'utf8' })
     })
