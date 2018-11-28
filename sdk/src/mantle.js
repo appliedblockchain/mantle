@@ -64,7 +64,7 @@ class Mantle {
       gasPrice: this.config.ethereum.sendParams.gasPrice,
       gas: '50000000',
       nonce: options.nonce || (await this.axios.get(`/nonce/${this.address}`)).data,
-      chainId: options.chainId || this.chainId || await this.axios.get('/chainId').data,
+      chainId: options.chainId || this.chainId || (await this.axios.get('/chainId')).data,
       to: contract.options.address,
       data: contract.methods[options.methodName](...options.params).encodeABI()
     }
