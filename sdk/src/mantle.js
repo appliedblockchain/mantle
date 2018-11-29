@@ -193,7 +193,13 @@ class Mantle {
         params: [ address, amount ]
       })
 
-      return this.sendSignedTransaction(rawTransaction)
+      const events = await this.sendSignedTransaction(rawTransaction)
+      const transferEvent = events.find(e => e.name === 'Transfer' && e.events.length === 3)
+
+      if (!transferEvent) {
+        throw new Error('Could not send tokens')
+      }
+
     }
 
     this.tokens[token.name].sendTokensAndCall = async (address, amount, data) => {
@@ -203,7 +209,12 @@ class Mantle {
         params: [ address, amount, this.web3.utils.fromAscii(data) ]
       })
 
-      return this.sendSignedTransaction(rawTransaction)
+      const events = await this.sendSignedTransaction(rawTransaction)
+      const transferAndCallEvent = events.find(e => e.name === 'Transfer' && e.events.length === 4)
+
+      if (!transferAndCallEvent) {
+        throw new Error('Could not send tokens')
+      }
     }
 
     this.tokens[token.name].getBalance = (address = this.address) => {
