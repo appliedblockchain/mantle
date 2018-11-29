@@ -199,7 +199,6 @@ class Mantle {
       if (!transferEvent) {
         throw new Error('Could not send tokens')
       }
-
     }
 
     this.tokens[token.name].sendTokensAndCall = async (address, amount, data) => {
