@@ -11,7 +11,7 @@ import "./lib/ERC677Receiver.sol";
  */
 contract ERC20Custom is ERC20Detailed, ERC20Mintable, ERC20Burnable {
 
-  event Transfer(address fromn, address to, uint value, bytes data);
+  event Transfer(address from, address to, uint value, bytes data);
 
   constructor(string name, string symbol, uint8 decimals, uint256 totalSupply) public ERC20Detailed(name, symbol, decimals) {
     super.mint(msg.sender, totalSupply);
