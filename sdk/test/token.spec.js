@@ -40,4 +40,12 @@ describe('Tokens', () => {
     expect(mantle.sendTokens).toEqual(mantle.tokens.MyToken.sendTokens)
     expect(mantle.getBalance).toEqual(mantle.tokens.MyToken.getBalance)
   })
+
+  test('throw an error if the address given to getBalance is invalid', async () => {
+    const mantle = new Mantle({})
+
+    mantle.loadToken({ name, address })
+
+    expect(() => mantle.getBalance('0xgt')).toThrow()
+  })
 })

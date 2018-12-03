@@ -11,6 +11,8 @@ const utils = require('./utils')
 const axios = require('axios')
 const abiDecoder = require('abi-decoder')
 
+const ADDRESS_REGEX = /^0x[a-f0-9]{40}$/i
+
 /**
  * @class Mantle
  */
@@ -217,6 +219,11 @@ class Mantle {
     }
 
     this.tokens[token.name].getBalance = (address = this.address) => {
+
+      if (!address.match(ADDRESS_REGEX)) {
+        throw new Error('Invalid etherum address format')
+      }
+
       const balance = this.call({
         contractName: token.name,
         methodName: 'balanceOf',
