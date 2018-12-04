@@ -30,11 +30,7 @@
     "@appliedblockchain/b-privacy-client": "^1.2.0",
     "abi-decoder": "^1.2.0",
     "axios": "^0.18.0",
-    "bitcore-mnemonic": "^1.5.0",
     "web3": "1.0.0-beta.33"
-  },
-  "peerDependencies": {
-    "bitcore-lib": "^0.16.0"
   },
   "devDependencies": {
     "@appliedblockchain/eslint-config": "^2.3.0",

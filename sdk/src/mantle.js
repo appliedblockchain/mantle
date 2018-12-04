@@ -1,3 +1,4 @@
+require('bitcore-lib')
 const BPrivacy = require('@appliedblockchain/b-privacy-client')
 const crypto = require('crypto')
 const Web3 = require('web3')
