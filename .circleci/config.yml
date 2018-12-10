@@ -60,3 +60,34 @@ jobs:
       # Wait for the server to load before running tests
       - run: dockerize -wait tcp://localhost:3000 -timeout 20s
       - run: npm run circleci
+
+  publish_to_npm:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - run:
+          name: Authorize NPM
+          command: echo "//registry.npmjs.org/:_authToken=$PRIVATE_NPM_TOKEN" > ~/.npmrc
+      - run:
+          name: Publish to NPM
+          command: npm publish
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /.*/
+
+      - publish_to_npm:
+          context: org-global
+          requires:
+            - build
+          filters:
+            tags:
+              only: /v.*/
+            branches:
+              ignore: /.*/
