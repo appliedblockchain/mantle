@@ -27,6 +27,9 @@ const routes = [
     path: '/pin/:hash',
     handler: async ctx => {
       const { hash } = ctx.request.params
+      if (!hash) {
+        ctx.throw(400, 'The hash of the content is missing')
+      }
       const retrievedPin = await ctx.ipfs.pin.ls(hash)
       ctx.body = retrievedPin
     }
@@ -47,11 +50,13 @@ const routes = [
       type: 'json'
     },
     handler: async ctx => {
-      const { data } = ctx.request.body
-      const [ storedData ] = await ctx.ipfs.add(Buffer.from(data))
-      const { hash } = storedData
-      await ctx.ipfs.pin.add(hash)
-      ctx.body = hash
+      // const { data } = ctx.request.body
+      // console.log("H", Buffer.from(ctx.request.body))
+      // const [ storedData ] = await ctx.ipfs.add(Buffer.from(data))
+      // const { hash } = storedData
+      // await ctx.ipfs.pin.add(hash)
+      const body = ctx.request.body
+      ctx.body = body
     }
   },
   {
