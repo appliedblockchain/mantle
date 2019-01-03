@@ -48,18 +48,6 @@ describe('ipfs', () => {
       return request(app)
       .get(`${endpoint}/${hash}`)
       .expect(200)
-      // .then((a) => {
-      //   const foo = a.body
-        // console.log(Buffer.isBuffer(foo))
-        // expect(a.body).toBe({ data: Buffer.isBuffer(a.body) })
-
-        // expect(foo).toEqual({ data: expect.any(Array), type: "Buffer" })
-      //   expect(Array.isArray(body)).toBe(true)
-      //   expect(body[0]).toEqual(expect.objectContaining({
-      //     hash: expect.stringContaining(hash),
-      //     type: expect.any(String)
-      //   }))
-      // })
     })
 
   })
@@ -73,22 +61,7 @@ describe('ipfs', () => {
       return request(app)
       .post(`${endpoint}/store`)
       .send(data)
-      // .expect(200)
-      .then(a => {
-        console.log(a)
-      })
-      // .then((a) => {
-      //   const foo = a.body
-        // console.log(Buffer.isBuffer(foo))
-        // expect(a.body).toBe({ data: Buffer.isBuffer(a.body) })
-
-        // expect(foo).toEqual({ data: expect.any(Array), type: "Buffer" })
-      //   expect(Array.isArray(body)).toBe(true)
-      //   expect(body[0]).toEqual(expect.objectContaining({
-      //     hash: expect.stringContaining(hash),
-      //     type: expect.any(String)
-      //   }))
-      // })
+      .expect(200)
     })
 
   })
