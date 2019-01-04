@@ -6,18 +6,6 @@ const { generateHash } = require('../../test/ipfs-utils')
 const API_PREFIX = ''
 const endpoint = `${API_PREFIX}/ipfs`
 
-// TODO: need to generate this dynamically, otherwise it won't work, or think of a way to mock it
-// const hash = 'QmPfL6uwUftjMvjNZumJvE1niNUy3MfijT6Frfgkhm3SaL'
-
-// const generateDummyHash = () => {
-//   const buffer = Buffer.from(randomBytes(32), 'hex')
-//   const encoded = multihash.encode(buffer, 'sha2-256')
-//   const hash = multihash.toB58String(encoded)
-//   console.log(hash)
-//   return hash
-// }
-
-
 describe('ipfs', () => {
   let app
   let hash
@@ -25,46 +13,6 @@ describe('ipfs', () => {
   beforeAll(async () => {
     app = await createTestServer()
     hash = await generateHash()
-
-    // const decorateCtx = () => {
-    //   jest.genMockFromModule('ipfs-api')
-    //   return async (ctx, next) => {
-
-    //     ctx.ipfs = jest.fn(() => {
-    //       return {
-    //         pin: jest.fn().mockImplementation(() => {
-    //           return {
-    //             ls: jest.fn(() => {
-    //               return {
-    //                 hash,
-    //                 type: 'recursive'
-    //               }
-    //             }),
-    //             rm: jest.fn()
-    //           }
-    //         }),
-    //         files: jest.fn().mockImplementation(() => {
-    //           return {
-    //             cat: jest.fn()
-    //           }
-    //         }),
-    //         add: jest.fn(),
-    //         repo: jest.fn().mockImplementation(() => {
-    //           return {
-    //             gc: jest.fn()
-    //           }
-    //         })
-    //       }
-    //     })
-    //     await next()
-    //   }
-    // }
-
-    // const mock = {
-    //   ipfs: undefined
-    // }
-    // const noop = () => { }
-    // await decorateCtx()(mock, noop)
   })
 
 
