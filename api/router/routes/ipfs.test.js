@@ -2,9 +2,15 @@ const request = require('supertest')
 const { createTestServer } = require('../../test/create-server')
 const API_PREFIX = ''
 const endpoint = `${API_PREFIX}/ipfs`
+const crypto = require('crypto')
 
-//TODO: need to generate this dynamically, otherwise it won't work, or think of a way to mock it
-const hash = 'QmdamUiPFY5PP2ep3fXqDp9b4aJTzcYyNGHXy2iWoEacHa'
+// TODO: need to generate this dynamically, otherwise it won't work, or think of a way to mock it
+const hash = 'QmdRKmufvokADHkGaLAqMsVGze3TCpr6boBDU7KBuCWFrk'
+
+// const getHash = (data) => {
+//   const hashed = crypto.createHash('sha256')
+//   const hash = `Qm${Buffer.from(hashed).toString('base64')}`
+// }
 
 describe('ipfs', () => {
   let app
@@ -25,15 +31,15 @@ describe('ipfs', () => {
             rm: jest.fn()
           }
         }),
-        files:  jest.fn().mockImplementation(() => {
+        files: jest.fn().mockImplementation(() => {
           return {
-            cat: jest.fn(),
+            cat: jest.fn()
           }
         }),
-        add:  jest.fn(),
-        repo:  jest.fn().mockImplementation(() => {
+        add: jest.fn(),
+        repo: jest.fn().mockImplementation(() => {
           return {
-            gc: jest.fn(),
+            gc: jest.fn()
           }
         })
       }
@@ -41,7 +47,7 @@ describe('ipfs', () => {
     }
 
     const mock = {
-      ipfs: undefined,
+      ipfs: undefined
     }
     const noop = () => { }
     await decorateCtx(mock, noop)
@@ -56,68 +62,57 @@ describe('ipfs', () => {
   describe(`GET ${endpoint}/pin/:hash`, () => {
     it('200 - OK', () => {
       return request(app)
-      .get(`${endpoint}/pin/${hash}`)
-      .expect(200)
-      .then(({ body }) => {
-        expect(Array.isArray(body)).toBe(true)
-        expect(body[0]).toEqual(expect.objectContaining({
-          hash: expect.stringContaining(hash),
-          type: expect.any(String)
-        }))
-      })
+        .get(`${endpoint}/pin/${hash}`)
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body)).toBe(true)
+          expect(body[0]).toEqual(expect.objectContaining({
+            hash: expect.stringContaining(hash),
+            type: expect.any(String)
+          }))
+        })
     })
-
-    // it('400 - Bad request, when the hash is missing', () => {
-    //   return request(app)
-    //   .get(`${endpoint}/pin`)
-    //   .expect(400)
-    //   // .then(({ body }) => {
-    //   // })
-    // })
-
 
   })
 
-  // describe(`GET ${endpoint}/:hash`, () => {
-  //   it('200 - OK', () => {
-  //     return request(app)
-  //     .get(`${endpoint}/${hash}`)
-  //     .expect(200)
-  //   })
+  describe(`GET ${endpoint}/:hash`, () => {
+    it('200 - OK', () => {
+      return request(app)
+        .get(`${endpoint}/${hash}`)
+        .expect(200)
+    })
+  })
 
-  // })
 
-  // describe(`POST ${endpoint}/store`, () => {
+  describe(`POST ${endpoint}/store`, () => {
+    const data = {
+      firstName: 'John',
+      lastName: 'Smith'
+    }
+    it('200 - OK', () => {
+      return request(app)
+        .post(`${endpoint}/store`)
+        .send(data)
+        .expect(200)
+        // .then(a => {
+        //   console.log(a)
+        // })
+    })
+
+  })
+
+  // describe(`DELETE ${endpoint}/delete/:hash`, () => {
+  //   const hash = 'QmdamUiPFY5PP2ep3fXqDp9b4aJTzcYyNGHXy2iWoEacHa'
   //   beforeEach(async () => {
   //     await request(app)
-  //     .get(`${endpoint}/pin/${hash}`)
-  //   })
-
-  //   const data = {
-  //       firstName: 'John',
-  //       lastName: 'Smith'
-  //   }
-  //   it('200 - OK', () => {
-  //     return request(app)
-  //     .post(`${endpoint}/store`)
-  //     .send(data)
-  //     .expect(200)
-  //   })
-
-  // })
-
-  // describe(`DELETE ${endpoint}/delete/${hash}`, () => {
-  //   beforeEach(async () => {
-  //     await request(app)
-  //     .get(`${endpoint}/pin/${hash}`)
+  //       .get(`${endpoint}/pin/${hash}`)
   //   })
 
   //   it('204 - OK', async () => {
   //     await request(app)
-  //     .delete(`${endpoint}/delete/${hash}`)
-  //     .expect(204)
+  //       .delete(`${endpoint}/delete/${hash}`)
+  //       .expect(204)
   //   })
-
   // })
 
 })
