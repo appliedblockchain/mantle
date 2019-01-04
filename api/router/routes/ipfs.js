@@ -50,13 +50,11 @@ const routes = [
       type: 'json'
     },
     handler: async ctx => {
-      // const { data } = ctx.request.body
-      // console.log("H", Buffer.from(ctx.request.body))
-      // const [ storedData ] = await ctx.ipfs.add(Buffer.from(data))
-      // const { hash } = storedData
-      // await ctx.ipfs.pin.add(hash)
-      const body = ctx.request.body
-      ctx.body = body
+      const { data } = ctx.request.body
+      const [ storedData ] = await ctx.ipfs.add(Buffer.from(data))
+      const { hash } = storedData
+      await ctx.ipfs.pin.add(hash)
+      ctx.body = hash
     }
   },
   {
