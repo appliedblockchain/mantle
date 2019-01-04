@@ -93,9 +93,14 @@ describe('ipfs', () => {
       return request(app)
         .get(`${endpoint}/${hash}`)
         .expect(200)
-        // .then(a => {
-        //   console.log(a)
-        // })
+        .then(({ body }) => {
+          expect(body).toEqual(expect.objectContaining({
+            retrieved: {
+              type: 'Buffer',
+              data: expect.any(Array)
+            }
+          }))
+        })
     })
   })
 
@@ -110,17 +115,20 @@ describe('ipfs', () => {
         .post(`${endpoint}/store`)
         .send(data)
         .expect(200)
-        .then(a => {
-          console.log(a)
+        .then(({ body }) => {
+          expect(body).toEqual(expect.objectContaining({
+            hash: expect.any(String)
+          }))
+          expect(body.hash).toHaveLength(46)
         })
     })
 
   })
 
-  describe(`DELETE ${endpoint}/delete/:hash`, () => {
+  describe(`DELETE ${endpoint}/delete/:hash`, async () => {
     it('204 - OK', async () => {
       hash = await generateHash()
-      await request(app)
+      return request(app)
         .delete(`${endpoint}/delete/${hash}`)
         .expect(204)
     })
