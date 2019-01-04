@@ -1,4 +1,4 @@
-const parityProxy = require('./parityProxy.js')
+const parityProxy = require('./parityProxy')
 const ipfs = require('./ipfs')
 
 module.exports = [
