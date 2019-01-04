@@ -1,16 +1,21 @@
+'use strict'
+
 const request = require('supertest')
 const { createTestServer } = require('../../test/create-server')
+const { generateHash } = require('../../test/ipfs-utils')
 const API_PREFIX = ''
 const endpoint = `${API_PREFIX}/ipfs`
-const crypto = require('crypto')
 
 // TODO: need to generate this dynamically, otherwise it won't work, or think of a way to mock it
-// const hash = 'QmdRKmufvokADHkGaLAqMsVGze3TCpr6boBDU7KBuCWFrk'
+// const hash = 'QmPfL6uwUftjMvjNZumJvE1niNUy3MfijT6Frfgkhm3SaL'
 
-const getHash = (data) => {
-  const hashed = crypto.createHash('sha256').update(data).digest('base58')
-  return `Qm${hashed}`
-}
+// const generateDummyHash = () => {
+//   const buffer = Buffer.from(randomBytes(32), 'hex')
+//   const encoded = multihash.encode(buffer, 'sha2-256')
+//   const hash = multihash.toB58String(encoded)
+//   console.log(hash)
+//   return hash
+// }
 
 
 describe('ipfs', () => {
@@ -19,43 +24,47 @@ describe('ipfs', () => {
 
   beforeAll(async () => {
     app = await createTestServer()
-    hash = getHash('mock-data')
-    console.log(hash)
+    hash = await generateHash()
 
-    // const decorateCtx = async (ctx, next) => {
-    //   ctx.ipfs = {
-    //     pin: jest.fn().mockImplementation(() => {
+    // const decorateCtx = () => {
+    //   jest.genMockFromModule('ipfs-api')
+    //   return async (ctx, next) => {
+
+    //     ctx.ipfs = jest.fn(() => {
     //       return {
-    //         ls: jest.fn(() => {
+    //         pin: jest.fn().mockImplementation(() => {
     //           return {
-    //             hash,
-    //             type: 'recursive'
+    //             ls: jest.fn(() => {
+    //               return {
+    //                 hash,
+    //                 type: 'recursive'
+    //               }
+    //             }),
+    //             rm: jest.fn()
     //           }
     //         }),
-    //         rm: jest.fn()
-    //       }
-    //     }),
-    //     files: jest.fn().mockImplementation(() => {
-    //       return {
-    //         cat: jest.fn()
-    //       }
-    //     }),
-    //     add: jest.fn(),
-    //     repo: jest.fn().mockImplementation(() => {
-    //       return {
-    //         gc: jest.fn()
+    //         files: jest.fn().mockImplementation(() => {
+    //           return {
+    //             cat: jest.fn()
+    //           }
+    //         }),
+    //         add: jest.fn(),
+    //         repo: jest.fn().mockImplementation(() => {
+    //           return {
+    //             gc: jest.fn()
+    //           }
+    //         })
     //       }
     //     })
+    //     await next()
     //   }
-    //   await next()
     // }
 
     // const mock = {
     //   ipfs: undefined
     // }
     // const noop = () => { }
-    // await decorateCtx(mock, noop)
-
+    // await decorateCtx()(mock, noop)
   })
 
 
@@ -84,6 +93,9 @@ describe('ipfs', () => {
       return request(app)
         .get(`${endpoint}/${hash}`)
         .expect(200)
+        // .then(a => {
+        //   console.log(a)
+        // })
     })
   })
 
@@ -98,25 +110,20 @@ describe('ipfs', () => {
         .post(`${endpoint}/store`)
         .send(data)
         .expect(200)
-        // .then(a => {
-        //   console.log(a)
-        // })
+        .then(a => {
+          console.log(a)
+        })
     })
 
   })
 
-  // describe(`DELETE ${endpoint}/delete/:hash`, () => {
-  //   const hash = 'QmdamUiPFY5PP2ep3fXqDp9b4aJTzcYyNGHXy2iWoEacHa'
-  //   beforeEach(async () => {
-  //     await request(app)
-  //       .get(`${endpoint}/pin/${hash}`)
-  //   })
-
-  //   it('204 - OK', async () => {
-  //     await request(app)
-  //       .delete(`${endpoint}/delete/${hash}`)
-  //       .expect(204)
-  //   })
-  // })
+  describe(`DELETE ${endpoint}/delete/:hash`, () => {
+    it('204 - OK', async () => {
+      hash = await generateHash()
+      await request(app)
+        .delete(`${endpoint}/delete/${hash}`)
+        .expect(204)
+    })
+  })
 
 })
