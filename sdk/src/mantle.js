@@ -30,7 +30,7 @@ class Mantle {
     this.contracts = {}
     this.keysLoaded = false
     this.ipfs = new IPFS(this.config)
-    this.registeredUsers = []
+    this.registeredUsers = new Set()
 
     this.setupWeb3Provider()
     this.loadContracts(this.config.contracts)
@@ -54,8 +54,7 @@ class Mantle {
 
     // Ensure address is checked with `0x` prefix
     userAddress = utils.standardiseHex(userAddress)
-
-    return this.registeredUsers.includes(userAddress)
+    return this.registeredUsers.has(userAddress)
   }
 
   /**
@@ -70,8 +69,7 @@ class Mantle {
 
     // Ensure address is saved with `0x` prefix
     userAddress = utils.standardiseHex(userAddress)
-
-    this.registeredUsers.push(userAddress)
+    this.registeredUsers.add(userAddress)
   }
 
   /**

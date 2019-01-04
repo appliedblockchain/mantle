@@ -109,13 +109,13 @@ describe('Mantle', () => {
       }).toThrow(errors.invalidEthAddress())
 
       mantle.registerUser(mantle.address)
-      expect(mantle.registeredUsers.includes(mantle.address)).toBe(true)
+      expect(mantle.registeredUsers.has(mantle.address)).toBe(true)
     })
 
     it('isUserRegistered() verifies correctly if a user has been added to `registeredUsers`', () => {
-      expect(mantle.registeredUsers.includes(mantle.address)).toBe(false)
+      expect(mantle.registeredUsers.has(mantle.address)).toBe(false)
       mantle.registerUser(mantle.address)
-      expect(mantle.registeredUsers.includes(mantle.address)).toBe(true)
+      expect(mantle.registeredUsers.has(mantle.address)).toBe(true)
     })
 
     it('recoverTransaction() recovers the address used to sign a transaction', async () => {
