@@ -5,52 +5,56 @@ const endpoint = `${API_PREFIX}/ipfs`
 const crypto = require('crypto')
 
 // TODO: need to generate this dynamically, otherwise it won't work, or think of a way to mock it
-const hash = 'QmdRKmufvokADHkGaLAqMsVGze3TCpr6boBDU7KBuCWFrk'
+// const hash = 'QmdRKmufvokADHkGaLAqMsVGze3TCpr6boBDU7KBuCWFrk'
 
-// const getHash = (data) => {
-//   const hashed = crypto.createHash('sha256')
-//   const hash = `Qm${Buffer.from(hashed).toString('base64')}`
-// }
+const getHash = (data) => {
+  const hashed = crypto.createHash('sha256').update(data).digest('base58')
+  return `Qm${hashed}`
+}
+
 
 describe('ipfs', () => {
   let app
+  let hash
 
   beforeAll(async () => {
     app = await createTestServer()
+    hash = getHash('mock-data')
+    console.log(hash)
 
-    const decorateCtx = async (ctx, next) => {
-      ctx.ipfs = {
-        pin: jest.fn().mockImplementation(() => {
-          return {
-            ls: jest.fn(() => {
-              return {
-                hash,
-                type: 'recursive'
-              }
-            }),
-            rm: jest.fn()
-          }
-        }),
-        files: jest.fn().mockImplementation(() => {
-          return {
-            cat: jest.fn()
-          }
-        }),
-        add: jest.fn(),
-        repo: jest.fn().mockImplementation(() => {
-          return {
-            gc: jest.fn()
-          }
-        })
-      }
-      await next()
-    }
+    // const decorateCtx = async (ctx, next) => {
+    //   ctx.ipfs = {
+    //     pin: jest.fn().mockImplementation(() => {
+    //       return {
+    //         ls: jest.fn(() => {
+    //           return {
+    //             hash,
+    //             type: 'recursive'
+    //           }
+    //         }),
+    //         rm: jest.fn()
+    //       }
+    //     }),
+    //     files: jest.fn().mockImplementation(() => {
+    //       return {
+    //         cat: jest.fn()
+    //       }
+    //     }),
+    //     add: jest.fn(),
+    //     repo: jest.fn().mockImplementation(() => {
+    //       return {
+    //         gc: jest.fn()
+    //       }
+    //     })
+    //   }
+    //   await next()
+    // }
 
-    const mock = {
-      ipfs: undefined
-    }
-    const noop = () => { }
-    await decorateCtx(mock, noop)
+    // const mock = {
+    //   ipfs: undefined
+    // }
+    // const noop = () => { }
+    // await decorateCtx(mock, noop)
 
   })
 
