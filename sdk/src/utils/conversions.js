@@ -54,9 +54,23 @@ function bufferToHex0x(data) {
   return bufferToOther(data, 'hex0x')
 }
 
+/**
+ * @description Returns hex string with `0x` prefix if not already included
+ * @param {string} data
+ * @return {hex0x}
+ */
+function standardiseHex(data) {
+  if (!isHex(data) && !isHex0x(data)) {
+    throw new Error('Invalid hex supplied')
+  }
+
+  return data.startsWith('0x') ? data : '0x' + data
+}
+
 module.exports = {
   bufferToOther,
   bufferToHex,
   bufferToHex0x,
-  bytesToBuffer
+  bytesToBuffer,
+  standardiseHex
 }

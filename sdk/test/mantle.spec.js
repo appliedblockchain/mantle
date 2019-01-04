@@ -11,10 +11,24 @@ const Ganache = require('ganache-core')
 const circleci = process.env.NODE_ENV === 'circleci'
 
 describe('Mantle', () => {
-  let data, server
+  let data, server, contractName, contract
 
   beforeAll(async () => {
     data = 'foo'
+    contractName = 'TestContract'
+    contract = {
+      name: contractName,
+      abi: [ {
+        'type': 'function',
+        'inputs': [ { 'name': 'a', 'type': 'uint256' } ],
+        'name': 'foo',
+        'outputs': []
+      } ],
+      options: {
+        address: '0x0x571e8a7ed290a45cf4f3dabdeb8674b000e0a4'
+      }
+    }
+
     if (!circleci) {
       server = Ganache.server()
       await server.listen(8545)
@@ -29,23 +43,9 @@ describe('Mantle', () => {
 
   test('signs and sends a transaction', async () => {
     /* Sending signed transactions is not available on Ganache - so only allow
-     * permit this test to run in a parity environment (i.e. circleci) */
+     * this test to run in a parity environment (i.e. circleci) */
     if (!circleci) {
       return
-    }
-
-    const contractName = 'TestContract'
-    const contract = {
-      name: contractName,
-      abi: [ {
-        'type': 'function',
-        'inputs': [ { 'name': 'a', 'type': 'uint256' } ],
-        'name': 'foo',
-        'outputs': []
-      } ],
-      options: {
-        address: '0x0x571e8a7ed290a45cf4f3dabdeb8674b000e0a4'
-      }
     }
 
     const mantle = new Mantle()
@@ -94,6 +94,44 @@ describe('Mantle', () => {
     expect(Buffer.isBuffer(mantle.getSigPrivateKey())).toBe(true)
     expect(isHex(mantle.getSigPrivateKey('hex'))).toBe(true)
     expect(isHex0x(mantle.getSigPrivateKey('hex0x'))).toBe(true)
+  })
+
+  describe('User management', () => {
+    let mantle
+    beforeEach(() => {
+      mantle = new Mantle()
+      mantle.loadMnemonic()
+    })
+
+    it('registerUser() adds only valid ethereum addresses to `registeredUsers`', () => {
+      expect(() => {
+        mantle.registerUser('0x123')
+      }).toThrow(errors.invalidEthAddress())
+
+      mantle.registerUser(mantle.address)
+      expect(mantle.registeredUsers.includes(mantle.address)).toBe(true)
+    })
+
+    it('isUserRegistered() verifies correctly if a user has been added to `registeredUsers`', () => {
+      expect(mantle.registeredUsers.includes(mantle.address)).toBe(false)
+      mantle.registerUser(mantle.address)
+      expect(mantle.registeredUsers.includes(mantle.address)).toBe(true)
+    })
+
+    it('recoverTransaction() recovers the address used to sign a transaction', async () => {
+      mantle.loadContract(contract)
+
+      const rawTransaction = await mantle.signTransaction({
+        contractName,
+        methodName: 'foo',
+        params: [ 1 ],
+        chainId: 1,
+        nonce: 1
+      })
+
+      const address = mantle.recoverTransaction(rawTransaction)
+      expect(address).toEqual(mantle.address)
+    })
   })
 
   describe('IPFS integration', () => {

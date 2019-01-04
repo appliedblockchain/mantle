@@ -1,3 +1,5 @@
+const ETH_ADDRESS_LENGTH = 40 // 40 hex characters === 20 bytes (the length of an Ethereum address)
+
 function isArray(value) {
   return Array.isArray(value)
 }
@@ -19,8 +21,15 @@ function isHex0x(value) {
   return value.startsWith('0x') && isHex(value.slice(2))
 }
 
+function isEthAddress(value) {
+  value = value.startsWith('0x') ? value.slice(2) : value
+
+  return isHex(value) && value.length === ETH_ADDRESS_LENGTH
+}
+
 module.exports = {
   isArray,
+  isEthAddress,
   isObject,
   isHex,
   isHex0x,

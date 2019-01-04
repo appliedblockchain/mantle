@@ -9,6 +9,7 @@ const Contract = require('./contract')
 const IPFS = require('./ipfs')
 const errors = require('./errors')
 const utils = require('./utils')
+const { isEthAddress } = require('./utils/typeChecks')
 const axios = require('axios')
 const abiDecoder = require('abi-decoder')
 
@@ -29,6 +30,7 @@ class Mantle {
     this.contracts = {}
     this.keysLoaded = false
     this.ipfs = new IPFS(this.config)
+    this.registeredUsers = []
 
     this.setupWeb3Provider()
     this.loadContracts(this.config.contracts)
@@ -38,6 +40,47 @@ class Mantle {
       baseURL: this.config.proxyURL,
       timeout: 5000
     })
+  }
+
+  /**
+   * @description Checks if the supplied user address has been added to `registeredUsers`
+   * @param {hex|hex0x} userAddress
+   * @return {bool}
+   */
+  isUserRegistered(userAddress) {
+    if (!isEthAddress(userAddress)) {
+      throw errors.invalidEthAddress()
+    }
+
+    // Ensure address is checked with `0x` prefix
+    userAddress = utils.standardiseHex(userAddress)
+
+    return this.registeredUsers.includes(userAddress)
+  }
+
+  /**
+   * @description Adds the supplied ethereum address to `registeredUsers`
+   * @param {hex|hex0x} userAddress
+   * @return {void}
+   */
+  registerUser(userAddress) {
+    if (!isEthAddress(userAddress)) {
+      throw errors.invalidEthAddress()
+    }
+
+    // Ensure address is saved with `0x` prefix
+    userAddress = utils.standardiseHex(userAddress)
+
+    this.registeredUsers.push(userAddress)
+  }
+
+  /**
+   * @description Returns the eth address which was used to sign the given RLP encoded transaction
+   * @param {hex0x} rawTransaction
+   * @return {address}
+   */
+  recoverTransaction(rawTransaction) {
+    return this.web3.eth.accounts.recoverTransaction(rawTransaction)
   }
 
   /**

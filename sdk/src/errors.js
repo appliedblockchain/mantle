@@ -12,5 +12,7 @@ module.exports = {
   invalidBlockchain: () =>
     new Error('Invalid blockchain supplied. Blockchains supported: "ethereum"'),
   invalidConfig: () =>
-    new Error('Invalid config type supplied: please pass an object')
+    new Error('Invalid config type supplied: please pass an object'),
+  invalidEthAddress: () =>
+    new Error('Invalid ethereum address provided')
 }

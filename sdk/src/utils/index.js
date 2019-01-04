@@ -3,7 +3,8 @@ const {
   bufferToHex,
   bufferToHex0x,
   bufferToOther,
-  bytesToBuffer
+  bytesToBuffer,
+  standardiseHex
 } = require('./conversions')
 
 const utils = {
@@ -11,6 +12,7 @@ const utils = {
   bufferToHex0x,
   bufferToOther,
   bytesToBuffer,
+  standardiseHex,
   publicKeyToAddress: BPrivacy.publicKeyToAddress
 }
 
