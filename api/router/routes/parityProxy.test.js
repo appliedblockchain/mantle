@@ -89,7 +89,7 @@ describe('parityProxy', () => {
     it('200 - OK', () => {
       const data = {
         address,
-        rawTransaction: '0xf88b208609184e72a0008402faf08094000000000000000000000000000000000000000080a47f74657374320000000000000000000000000000000000000000000000000000006000552ca0ff0076ea086ebb664a1c2df1b2b223ae6fcaf343bf2517d6f3b6665b70f302a5a062288e0fce429a59499aafdc6a40ebdadc38fa1d0c490a2747ed1e18320123c6'
+        rawTransaction: 'mock-raw-tx'
       }
       return request(app)
         .post(`${endpoint}/tx`)
