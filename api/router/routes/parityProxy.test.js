@@ -42,11 +42,12 @@ describe('parityProxy', () => {
 
   beforeEach(async () => {
     app = await createTestServer()
-  })
 
+  })
 
   afterEach(async () => {
     await app.close()
+    jest.resetAllMocks()
   })
 
   describe(`GET ${endpoint}/chainId`, () => {
