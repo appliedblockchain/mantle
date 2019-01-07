@@ -41,14 +41,14 @@ describe('ipfs', () => {
       return request(app)
         .get(`${endpoint}/${hash}`)
         .expect(200)
-        .then(({ body }) => {
-          // expect(body).toEqual(expect.objectContaining({
-          //   retrieved: {
-          //     type: 'Buffer',
-          //     data: expect.any(Array)
-          //   }
-          // }))
-        })
+        // .then(({ body }) => {
+      // expect(body).toEqual(expect.objectContaining({
+      //   retrieved: {
+      //     type: 'Buffer',
+      //     data: expect.any(Array)
+      //   }
+      // }))
+        // })
     })
   })
 
@@ -63,12 +63,12 @@ describe('ipfs', () => {
         .post(`${endpoint}/store`)
         .send(data)
         .expect(200)
-        .then(({ body }) => {
-          // expect(body).toEqual(expect.objectContaining({
-          //   hash: expect.any(String)
-          // }))
-          // expect(body.hash).toHaveLength(46)
-        })
+        // .then(({ body }) => {
+      // expect(body).toEqual(expect.objectContaining({
+      //   hash: expect.any(String)
+      // }))
+      // expect(body.hash).toHaveLength(46)
+        // })
     })
 
   })
