@@ -32,7 +32,7 @@ describe('Tokens', () => {
 
     await mantle.sendTokens('0x1F2e5282481C07BC8B7b07E53Bc3EF6A8012D6b7', toSend)
 
-    expect().toEqual(balance - toSend)
+    expect((await mantle.getBalance()).result).toEqual(balance - toSend)
   })
 
   test('Can call transferAndCall to transfer tokens to a contract', async () => {
