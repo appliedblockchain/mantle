@@ -16,8 +16,8 @@ class IPFS {
    * @return {array}
    */
   async pinLs(hash) {
-    const { data: pinset } = await this.axios.get(`/pin/${hash}`)
-    return pinset
+    const { data: { retrievedPin } } = await this.axios.get(`/pin/${hash}`)
+    return { retrievedPin }
   }
 
   /**
@@ -25,7 +25,7 @@ class IPFS {
    * @return {buffer}
    */
   async retrieve(hash) {
-    const { data: retrieved } = await this.axios.get(`/${hash}`)
+    const { data: { retrieved } } = await this.axios.get(`/${hash}`)
     return retrieved
   }
 
@@ -49,7 +49,7 @@ class IPFS {
       throw new TypeError(`Invalid data supplied: expected string, got ${typeof data}`)
     }
 
-    const { data: hash } = await this.axios.post('/store', { data })
+    const { data: { hash } } = await this.axios.post('/store', { data })
     return hash
   }
 }
