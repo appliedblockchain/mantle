@@ -26,8 +26,9 @@ describe('ipfs', () => {
         .get(`${endpoint}/pin/${hash}`)
         .expect(200)
         .then(({ body }) => {
-          expect(Array.isArray(body)).toBe(true)
-          expect(body[0]).toEqual(expect.objectContaining({
+          expect(body).toHaveProperty('retrievedPin')
+          expect(Array.isArray(body.retrievedPin)).toBe(true)
+          expect(body.retrievedPin[0]).toEqual(expect.objectContaining({
             hash: expect.stringContaining(hash),
             type: expect.any(String)
           }))
@@ -42,12 +43,12 @@ describe('ipfs', () => {
         .get(`${endpoint}/${hash}`)
         .expect(200)
         .then(({ body }) => {
-          // expect(body).toEqual(expect.objectContaining({
-          //   retrieved: {
-          //     type: 'Buffer',
-          //     data: expect.any(Array)
-          //   }
-          // }))
+          expect(body).toEqual(expect.objectContaining({
+            retrieved: {
+              type: 'Buffer',
+              data: expect.any(Array)
+            }
+          }))
         })
     })
   })
@@ -64,10 +65,10 @@ describe('ipfs', () => {
         .send(data)
         .expect(200)
         .then(({ body }) => {
-          // expect(body).toEqual(expect.objectContaining({
-          //   hash: expect.any(String)
-          // }))
-          // expect(body.hash).toHaveLength(46)
+          expect(body).toEqual(expect.objectContaining({
+            hash: expect.any(String)
+          }))
+          expect(body.hash).toHaveLength(46)
         })
     })
 
