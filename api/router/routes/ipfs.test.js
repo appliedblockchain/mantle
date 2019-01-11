@@ -26,9 +26,8 @@ describe('ipfs', () => {
         .get(`${endpoint}/pin/${hash}`)
         .expect(200)
         .then(({ body }) => {
-          expect(body).toHaveProperty('retrievedPin')
-          expect(Array.isArray(body.retrievedPin)).toBe(true)
-          expect(body.retrievedPin[0]).toEqual(expect.objectContaining({
+          expect(Array.isArray(body)).toBe(true)
+          expect(body[0]).toEqual(expect.objectContaining({
             hash: expect.stringContaining(hash),
             type: expect.any(String)
           }))
@@ -42,12 +41,9 @@ describe('ipfs', () => {
       return request(app)
         .get(`${endpoint}/${hash}`)
         .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual(expect.objectContaining({
-            retrieved: {
-              type: 'Buffer',
-              data: expect.any(Array)
-            }
+        .then(({ headers }) => {
+          expect(headers).toEqual(expect.objectContaining({
+            'content-type': expect.stringMatching('application/octet-stream')
           }))
         })
     })
@@ -60,11 +56,9 @@ describe('ipfs', () => {
         .post(`${endpoint}/store`)
         .send({ data: 'foo' })
         .expect(200)
-        .then(({ body }) => {
-          expect(body).toEqual(expect.objectContaining({
-            hash: expect.any(String)
-          }))
-          expect(body.hash).toHaveLength(46)
+        .expect(({ text }) => {
+          expect(text.startsWith('Qm')).toBe(true)
+          expect(text).toHaveLength(46)
         })
     })
 
