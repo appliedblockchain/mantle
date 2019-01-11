@@ -26,7 +26,7 @@ class IPFS {
    */
   async retrieve(hash) {
     const { data: { retrieved } } = await this.axios.get(`/${hash}`)
-    return retrieved
+    return retrieved.data
   }
 
   /**
