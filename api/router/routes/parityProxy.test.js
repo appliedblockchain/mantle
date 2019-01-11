@@ -114,8 +114,8 @@ describe('parityProxy', () => {
         .post(`${endpoint}/call`)
         .send(data)
         .expect(200)
-        .then(({ body }) => {
-          expect(body.result).toEqual('0x000000000000000000000000000000000000000000000000000000000000000a')
+        .then(({ text }) => {
+          expect(text).toEqual('0x000000000000000000000000000000000000000000000000000000000000000a')
         })
     })
   })

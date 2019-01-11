@@ -27,16 +27,16 @@ describe('Tokens', () => {
     expect(mantle.tokens.MyToken).toBeDefined()
 
 
-    const balance = +(await mantle.getBalance()).result
+    const balance = await mantle.getBalance()
     const toSend = 1
 
     await mantle.sendTokens('0x1F2e5282481C07BC8B7b07E53Bc3EF6A8012D6b7', toSend)
 
-    expect(+(await mantle.getBalance()).result).toEqual(balance - toSend)
+    expect(await mantle.getBalance()).toEqual(balance - toSend)
   })
 
   test('Can call transferAndCall to transfer tokens to a contract', async () => {
-    const receiverBalance = +(await mantle.getBalance(receiverAddress)).result
+    const receiverBalance = await mantle.getBalance(receiverAddress)
 
 
     const toSend = 1
@@ -45,7 +45,7 @@ describe('Tokens', () => {
     await mantle.sendTokensAndCall(receiverAddress, toSend, data)
 
 
-    const newReceiverBalance = +(await mantle.getBalance(receiverAddress)).result
+    const newReceiverBalance = await mantle.getBalance(receiverAddress)
 
     expect(newReceiverBalance).toEqual(receiverBalance + toSend)
   })

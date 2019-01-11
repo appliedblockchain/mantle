@@ -41,34 +41,25 @@ describe('ipfs', () => {
       return request(app)
         .get(`${endpoint}/${hash}`)
         .expect(200)
-        // .then(({ body }) => {
-      // expect(body).toEqual(expect.objectContaining({
-      //   retrieved: {
-      //     type: 'Buffer',
-      //     data: expect.any(Array)
-      //   }
-      // }))
-        // })
+        .then(({ headers }) => {
+          expect(headers).toEqual(expect.objectContaining({
+            'content-type': expect.stringMatching('application/octet-stream')
+          }))
+        })
     })
   })
 
 
   describe(`POST ${endpoint}/store`, () => {
-    const data = {
-      firstName: 'John',
-      lastName: 'Smith'
-    }
     it('200 - OK', () => {
       return request(app)
         .post(`${endpoint}/store`)
-        .send(data)
+        .send({ data: 'foo' })
         .expect(200)
-        // .then(({ body }) => {
-      // expect(body).toEqual(expect.objectContaining({
-      //   hash: expect.any(String)
-      // }))
-      // expect(body.hash).toHaveLength(46)
-        // })
+        .expect(({ text }) => {
+          expect(text.startsWith('Qm')).toBe(true)
+          expect(text).toHaveLength(46)
+        })
     })
 
   })

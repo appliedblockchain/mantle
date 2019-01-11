@@ -37,7 +37,6 @@ const routes = [
     handler: async ctx => {
       const { hash } = ctx.request.params
       const retrieved = await ctx.ipfs.files.cat(hash)
-      // ctx.body = { retrieved }
       ctx.body = retrieved
     }
   },
@@ -48,11 +47,10 @@ const routes = [
       type: 'json'
     },
     handler: async ctx => {
-      const data = ctx.request.body.data || ctx.request.body
-      const [ storedData ] = await ctx.ipfs.add(Buffer.from(JSON.stringify(data)))
+      const { data } = ctx.request.body
+      const [ storedData ] = await ctx.ipfs.add(Buffer.from(data))
       const { hash } = storedData
       await ctx.ipfs.pin.add(hash)
-      // ctx.body = { hash }
       ctx.body = hash
     }
   },

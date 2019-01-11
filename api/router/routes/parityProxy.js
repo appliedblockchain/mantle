@@ -96,8 +96,7 @@ const routes = [
 
       const result = await fnc(...params).call()
 
-      // ctx.body = result
-      ctx.body = { result }
+      ctx.body = result
     }
   }
 ]
