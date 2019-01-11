@@ -55,14 +55,10 @@ describe('ipfs', () => {
 
 
   describe(`POST ${endpoint}/store`, () => {
-    const data = {
-      firstName: 'John',
-      lastName: 'Smith'
-    }
     it('200 - OK', () => {
       return request(app)
         .post(`${endpoint}/store`)
-        .send(data)
+        .send({ data: 'foo' })
         .expect(200)
         .then(({ body }) => {
           expect(body).toEqual(expect.objectContaining({

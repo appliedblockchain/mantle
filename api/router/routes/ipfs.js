@@ -47,8 +47,8 @@ const routes = [
       type: 'json'
     },
     handler: async ctx => {
-      const data = ctx.request.body.data || ctx.request.body
-      const [ storedData ] = await ctx.ipfs.add(Buffer.from(JSON.stringify(data)))
+      const { data } = ctx.request.body
+      const [ storedData ] = await ctx.ipfs.add(Buffer.from(data))
       const { hash } = storedData
       await ctx.ipfs.pin.add(hash)
       ctx.body = { hash }
