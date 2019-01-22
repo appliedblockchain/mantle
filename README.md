@@ -48,7 +48,7 @@ To run:
   > `npm publish`
 - Commit package.json version changes to master
 
-# Local testing
+# Run Locally
 
 - Install dependencies for each component:
   > `npm install` || `yarn`
@@ -62,6 +62,14 @@ To run:
 - Load an instance of parity to test ganache non-compliant tests:
   > `cd path/to/sdk && npm run parity`
 - Run test suite for each component: `npm test`
+
+# Run Tests Locally
+
+- Run the IPFS daemon inside a shell:
+  > `ipfs daemon`
+- Run the test
+  > `cd path/to/api`
+  > `npm run test`
 
 # IPFS setup
 
