@@ -14,5 +14,5 @@ Alternatively it can be used as a dependency in other projects; See [Usage.md](U
 
 To run the api tests:
 
-`ipfs daemon`
-`npm run test`
+- `ipfs daemon` or `docker run -p 5001:5001 --mount source=ipfs-volume,destination=/data/ipfs/blocks appliedblockchain/ipfs-solo:latest` if you'd like to use [parity-solo](https://github.com/appliedblockchain/ipfs-solo)
+- `npm run test`
