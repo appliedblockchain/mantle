@@ -16,8 +16,8 @@ class IPFS {
    * @return {array}
    */
   async pinLs(hash) {
-    const { data: pinset } = await this.axios.get(`/pin/${hash}`)
-    return pinset
+    const { data: retrievedPin } = await this.axios.get(`/pin/${hash}`)
+    return retrievedPin
   }
 
   /**

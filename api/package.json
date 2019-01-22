@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/mantle-api",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,9 @@
     "start": "node run.js",
     "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo",
     "ipfs": "docker run -p 5001:5001 appliedblockchain/ipfs-solo",
-    "docker": "npm run parity & npm run ipfs"
+    "docker": "npm run parity & npm run ipfs",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "author": "",
   "license": "GPL-3.0-or-later",
@@ -24,6 +26,7 @@
     "koa-compress": "^3.0.0",
     "koa-joi-router": "^5.1.0",
     "koa-respond": "^1.0.1",
+    "supertest": "^3.3.0",
     "web3": "1.0.0-beta.33"
   },
   "devDependencies": {
@@ -32,5 +35,13 @@
     "ganache-core": "^2.2.1",
     "jest": "^23.5.0",
     "jsdoc": "^3.5.5"
+  },
+  "jest": {
+    "setupTestFrameworkScriptFile": "./test/jest-config.js",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/config/"
+    ]
   }
 }
