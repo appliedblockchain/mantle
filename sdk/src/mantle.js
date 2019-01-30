@@ -473,7 +473,7 @@ class Mantle {
    * - 32-byte scalar `r` (part of the ECDSA signature)
    * - 32-byte scalar `s` (part of the ECDSA signature)
    * - A recovery id `v` used for public key recovery
-   * @param  {String|Boolean|Number|any[]} data - Single value (String / Boolean / Number), or array of values to sign
+   * @param  {String|Boolean|Number|any[]} data - Single value or array of values to sign
    * @param  {buffer} privateKey
    * @return {hex0x}
    */
