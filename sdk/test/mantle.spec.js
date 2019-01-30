@@ -125,8 +125,23 @@ describe('Mantle', () => {
       }).toThrow()
     })
 
-    test('generates a message signature via sign()', () => {
+    test('generates a message signature via sign(), where data = String', () => {
       const mantle = new Mantle()
+
+      mantle.loadMnemonic()
+      const signature = Mantle.sign(data, mantle.sigPrivateKey)
+
+      expect(signature).toBeTruthy()
+      expect(signature.startsWith('0x')).toBe(true)
+    })
+
+    test('generates a message signature via sign(), where data = Array', () => {
+      const mantle = new Mantle()
+      const data = [
+        'string1',
+        'string2',
+        12
+      ]
 
       mantle.loadMnemonic()
       const signature = Mantle.sign(data, mantle.sigPrivateKey)
@@ -137,54 +152,83 @@ describe('Mantle', () => {
   })
 
   describe('Recovery', () => {
-    test('throws an error when providing an invalid hash', () => {
-      const mantle = new Mantle()
+    describe('where data being signed is a single string', () => {
+      test('throws an error when providing an invalid hash', () => {
+        const mantle = new Mantle()
+  
+        mantle.loadMnemonic()
+        const signature = Mantle.sign(data, mantle.sigPrivateKey)
+  
+        const invalidHash = '@invalid_hash'
+  
+        expect(() => {
+          Mantle.recover(invalidHash, signature)
+        }).toThrow()
+      })
+  
+      test('throws an error when providing an invalid signature', () => {
+        const hash = Mantle.generateHash(data)
+        const mantle = new Mantle()
+  
+        mantle.loadMnemonic()
+        Mantle.sign(data, mantle.privateKey)
+  
+        const invalidSignature = '@invalid_signature'
+  
+        expect(() => {
+          Mantle.recover(hash, invalidSignature)
+        }).toThrow()
+      })
 
-      mantle.loadMnemonic()
-      const signature = Mantle.sign(data, mantle.sigPrivateKey)
-
-      const invalidHash = '@invalid_hash'
-
-      expect(() => {
-        Mantle.recover(invalidHash, signature)
-      }).toThrow()
+      test('recovers the public key for an account that signed some data, via recover()', () => {
+        const hash = Mantle.generateHash(data)
+        const mantle = new Mantle()
+  
+        mantle.loadMnemonic()
+        const signature = Mantle.sign(data, mantle.sigPrivateKey)
+        const publicKey = Mantle.recover(hash, signature)
+  
+        expect(publicKey).toEqual(mantle.getSigPublicKey('hex0x'))
+      })
+      
+      test('recovers the address for an account that signed some data, via recoverAddress()', () => {
+        const mantle = new Mantle()
+        mantle.loadMnemonic()
+        const hash = Mantle.generateHash(data)
+        
+        const signature = Mantle.sign(data, mantle.sigPrivateKey)
+        const address = Mantle.recoverAddress(hash, signature)
+        
+        expect(address).toEqual(mantle.sigAddress)
+      })
     })
 
-    test('throws an error when providing an invalid signature', () => {
-      const hash = Mantle.generateHash(data)
-      const mantle = new Mantle()
+    describe('where data being signed is an array of arguments', () => {
+      const data = [ 'arg1', 'arg2' ]
 
-      mantle.loadMnemonic()
-      Mantle.sign(data, mantle.privateKey)
-
-      const invalidSignature = '@invalid_signature'
-
-      expect(() => {
-        Mantle.recover(hash, invalidSignature)
-      }).toThrow()
+      test('recovers the public key for an account that signed some data, via recover()', () => {
+        const hash = Mantle.generateHash(...data)
+        const mantle = new Mantle()
+        
+        mantle.loadMnemonic()
+        const signature = Mantle.sign(data, mantle.sigPrivateKey)
+        const publicKey = Mantle.recover(hash, signature)
+        
+        expect(publicKey).toEqual(mantle.getSigPublicKey('hex0x'))
+      })
+      
+      test('recovers the address for an account that signed some data, via recoverAddress()', () => {
+        const mantle = new Mantle()
+        mantle.loadMnemonic()
+        const hash = Mantle.generateHash(...data)
+        
+        const signature = Mantle.sign(data, mantle.sigPrivateKey)
+        const address = Mantle.recoverAddress(hash, signature)
+        
+        expect(address).toEqual(mantle.sigAddress)
+      })
     })
-
-    test('recovers the public key for an account that signed some data, via recover()', () => {
-      const hash = Mantle.generateHash(data)
-      const mantle = new Mantle()
-
-      mantle.loadMnemonic()
-      const signature = Mantle.sign(data, mantle.sigPrivateKey)
-      const publicKey = Mantle.recover(hash, signature)
-
-      expect(publicKey).toEqual(mantle.getSigPublicKey('hex0x'))
-    })
-
-    test('recovers the address for an account that signed some data, via recoverAddress()', () => {
-      const mantle = new Mantle()
-      mantle.loadMnemonic()
-      const hash = Mantle.generateHash(data)
-
-      const signature = Mantle.sign(data, mantle.sigPrivateKey)
-      const address = Mantle.recoverAddress(hash, signature)
-
-      expect(address).toEqual(mantle.sigAddress)
-    })
+  
   })
 
   describe('Contract integration', () => {
@@ -372,11 +416,21 @@ describe('Mantle', () => {
       account = mantle.web3.eth.accounts.create()
     })
 
-    test('generates a hash via generateHash()', () => {
-      const hash = Mantle.generateHash(data)
+    
+    describe('generates a hash via generateHash()', () => {
+      test('where 1 argument provided', () => {
+        const hash = Mantle.generateHash(data)
+  
+        expect(hash.startsWith('0x')).toBe(true)
+        expect(Buffer.from(hash.slice(2), 'hex').length).toEqual(32)
+      })
 
-      expect(hash.startsWith('0x')).toBe(true)
-      expect(Buffer.from(hash.slice(2), 'hex').length).toEqual(32)
+      test('where multiple arguments provided', () => {
+        const hash = Mantle.generateHash('string', 123, true)
+  
+        expect(hash.startsWith('0x')).toBe(true)
+        expect(Buffer.from(hash.slice(2), 'hex').length).toEqual(32)
+      })
     })
 
     describe('asymmetric encryption/decryption', () => {
