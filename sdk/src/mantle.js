@@ -483,7 +483,7 @@ class Mantle {
     }
 
     // make sure we have an array of arguments to pass to `generateHash`
-    const dataToHash = Array.isArray(data) ? data : [data]
+    const dataToHash = Array.isArray(data) ? data : [ data ]
 
     const hash = Mantle.generateHash(...dataToHash)
     
