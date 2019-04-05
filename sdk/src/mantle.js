@@ -486,7 +486,7 @@ class Mantle {
     const dataToHash = Array.isArray(data) ? data : [ data ]
 
     const hash = Mantle.generateHash(...dataToHash)
-    
+
     // Convert hash to buffer to conform with secp256k1.sign required argument types
     const hashBuffer = utils.bytesToBuffer(hash)
 
