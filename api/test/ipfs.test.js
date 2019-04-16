@@ -1,8 +1,8 @@
 'use strict'
 
 const request = require('supertest')
-const { createTestServer } = require('../../test/create-server')
-const { generateHash } = require('../../test/ipfs-utils')
+const { createTestServer } = require('./create-server')
+const { generateHash } = require('./ipfs-utils')
 const API_PREFIX = ''
 const endpoint = `${API_PREFIX}/ipfs`
 

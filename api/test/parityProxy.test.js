@@ -1,7 +1,7 @@
 'use strict'
 
 const request = require('supertest')
-const { createTestServer } = require('../../test/create-server')
+const { createTestServer } = require('./create-server')
 const endpoint = '/parityProxy'
 
 jest.mock('web3', () => {
