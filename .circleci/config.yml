@@ -1,88 +1,107 @@
-# TODO: Utilise workflows for parallel builds
-version: 2
+version: 2.1
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:10.7
+  api:
+    docker:
+      - image: circleci/node:10.7
+      - image: appliedblockchain/parity-solo:latest
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+      - image: appliedblockchain/ipfs-solo:latest
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+
 jobs:
   build:
-    docker:
-    # Primary docker container
-    - image: circleci/node:10.7
-    - image: appliedblockchain/parity-solo:latest
-      auth:
-        username: $DOCKER_USER
-        password: $DOCKER_PASSWORD
-    - image: appliedblockchain/ipfs-solo:latest
-      auth:
-        username: $DOCKER_USER
-        password: $DOCKER_PASSWORD
+    parameters:
+      directory:
+        type: string
+      executor:
+        type: string
+      script:
+        type: string
+      background:
+        type: boolean
+    executor: << parameters.executor >>
 
     working_directory: ~/mantle
 
     steps:
       - checkout
 
-      - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
-
-      - run:
-          name: Authorize NPM
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-api-{{ checksum "api/package.json" }}
-          - v1-sdk-{{ checksum "sdk/package.json" }}
-          - v1-server-sdk-{{ checksum "server-sdk/package.json" }}
+          - v1-<< parameters.directory >>-{{ checksum "<< parameters.directory >>/package.json" }}
           # Fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
       - run:
-          name: yarn install sdk
-          command: cd ~/mantle/sdk && yarn install
-
-      - run:
-          name: yarn install api
-          command: cd ~/mantle/api && yarn install
-
-      - run:
-          name: yarn install server-sdk
-          command: cd ~/mantle/server-sdk && yarn install
+          name: yarn install << parameters.directory >>
+          command: |
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+            cd ~/mantle/<< parameters.directory >>
+            yarn install
+            rm -rf ~/.npmrc
 
       - save_cache:
-          key: v1-api-{{ checksum "api/package.json" }}
+          key: v1-<< parameters.directory >>-{{ checksum "<< parameters.directory >>/package.json" }}
           paths:
-            - /api/node_modules
-
-      - save_cache:
-          key: v1-sdk-{{ checksum "sdk/package.json" }}
-          paths:
-            - /sdk/node_modules
-
-      - save_cache:
-          key: v1-server-sdk-{{ checksum "server-sdk/package.json" }}
-          paths:
-            - /server-sdk/node_modules
+            - /<< parameters.directory >>/node_modules
 
       - setup_remote_docker
 
       - run:
-          name: api server
-          command: cd ~/mantle/api && npm run start
-          background: true
+          name: custom command
+          background: << parameters.background >>
+          command: |
+            cd ~/mantle/<< parameters.directory >>
+            << parameters.script >>
 
-      # Wait for the server to load before running tests
-      - run: dockerize -wait tcp://localhost:3000 -timeout 20s
-      - run:
-          name: run circleci
-          command: cd ~/mantle/sdk && npm run circleci
-      - run:
-          name: run api tests
-          command: cd ~/mantle/api && npm test
-      - run:
-          name: run circleci integration tests
-          command: cd ~/mantle/sdk && node bin/deployTestToken.js && source exportTestAddresses.sh && npm run circleci-integration
-      - run:
-          name: run server-sdk tests
-          command: cd ~/mantle/server-sdk && npm test
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          name: run_api
+          directory: api
+          executor: api
+          script: npm run start
+          background: true
+      - build:
+          name: test_sdk
+          directory: sdk
+          executor: node
+          script: npm run circleci
+          background: false
+          requires:
+            - run_api
+      - build:
+          name: test_api
+          directory: api
+          executor: node
+          script: npm test
+          background: false
+          requires:
+            - run_api
+      - build:
+          name: test_sdk_integration
+          directory: sdk
+          executor: node
+          script: node bin/deployTestToken.js && source exportTestAddresses.sh && npm run circleci-integration
+          background: false
+          requires:
+            - run_api
+      - build:
+          name: test_server_sdk
+          directory: server-sdk
+          executor: node
+          script: npm test
+          background: false
+          requires:
+            - run_api
