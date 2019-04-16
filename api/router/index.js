@@ -1,8 +1,8 @@
 /** @module mantle/api/router */
 
 const koaRouter = require('koa-joi-router')
-const ipfs = require('./routes/ipfs.js')
-const parityProxy = require('./routes/parityProxy.js')
+const ipfs = require('./routes/ipfs')
+const parityProxy = require('./routes/parityProxy')
 
 /**
  * Creates a new joi-router that uses the given middleware and routes
