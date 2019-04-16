@@ -78,6 +78,9 @@ jobs:
           name: run circleci
           command: cd ~/mantle/sdk && npm run circleci
       - run:
+          name: run api tests
+          command: cd ~/mantle/api && npm test
+      - run:
           name: run circleci integration tests
           command: cd ~/mantle/sdk && node bin/deployTestToken.js && source exportTestAddresses.sh && npm run circleci-integration
       - run:
