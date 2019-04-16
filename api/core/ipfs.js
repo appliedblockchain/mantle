@@ -4,7 +4,6 @@ const defaultIpfs = ipfsAPI(process.env.IPFS_HOST || '127.0.0.1')
 const add = async (data, ipfs = defaultIpfs) => {
   const [ storedData ] = await ipfs.add(Buffer.from(data))
   const { hash } = storedData
-  await ipfs.pin.add(hash)
   return hash
 }
 
