@@ -1,7 +1,7 @@
-const ipfsAPI = require('ipfs-api')
-const ipfsApiOptions = '127.0.0.1'
+const ipfsClient = require('ipfs-http-client')
+const ipfsClientOptions = '127.0.0.1'
 
-const ipfs = ipfsAPI(ipfsApiOptions)
+const ipfs = ipfsClient(ipfsClientOptions)
 const { randomBytes } = require('crypto')
 
 const generateHash = async () => {

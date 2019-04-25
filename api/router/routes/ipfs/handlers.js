@@ -8,7 +8,7 @@ const pin = async ctx => {
 
 const get = async ctx => {
   const { hash } = ctx.request.params
-  const retrieved = await ctx.ipfs.files.cat(hash)
+  const retrieved = await ctx.ipfs.cat(hash)
   ctx.body = retrieved
 }
 

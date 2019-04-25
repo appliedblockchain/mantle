@@ -12,7 +12,7 @@
   "author": "appliedblockchain",
   "license": "",
   "dependencies": {
-    "ipfs-api": "^25.0.0"
+    "ipfs-http-client": "^30.1.3"
   },
   "devDependencies": {
     "javascript-obfuscator": "^0.18.1",
