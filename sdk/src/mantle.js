@@ -115,7 +115,7 @@ class Mantle {
   }
 
   /**
-   * Generates hash from arguments passed
+   * Generates hash from arguments
    * @param {any[]} args - 1 or more arguments to generate hash from (can be of type: String, Number or Boolean)
    * @return {hex0x}
    */

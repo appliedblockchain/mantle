@@ -1,6 +1,6 @@
 # Mantle
 
-Mantle is a blockchain SDK that intends to simplify the development process when writing code for chain. Mantle comprises both a client and server side sdk, that when combined help to facilitate a host of tasks such as secure data storage on IPFS for GDPR compliance, sending signed transactions, transaction nonce recording etc.
+Mantle is a blockchain SDK that intends to simplify the development process when writing code for chains. Mantle comprises both a client and server side sdk, that when combined help to facilitate a host of tasks such as secure data storage on IPFS for GDPR compliance, sending signed transactions, transaction nonce recording etc.
 
 # Features
 
@@ -97,9 +97,13 @@ const decrypted = Mantle.decrypt(encrypted, mantle.privateKey) || mantle.decrypt
 
 ### `Tokens`
 
-If your config defines one or multiple tokens they will be loaded automatically. The first token will become the defaultToken accessible via `mantle.defaultToken`. Other tokens can be accessed via `mantle.tokens.TokenName`.
+If your configuration defines one or multiple tokens they will be loaded automatically. The first token will become the defaultToken accessible via `mantle.defaultToken`. Other tokens can be accessed via `mantle.tokens.TokenName`.
 
 Each token also has two convenience methods: `getBalance(address)` with address defaulting to mantle.address and `sendTokens(address, amount)`. The default token getBalance and sendTokens methods are also aliased directly to `mantle.getBalance()` and `mantle.sendTokens(...)`.
+
+### `Proxy`
+
+Mantle hooks into server-side middleware for processing IPFS requests and transaction signing (simply set the proxyURL in the Mantle configuration object). We supply a set of ready to go middleware from [mantle-server](https://github.com/appliedblockchain/mantle/tree/master/server-sdk) or you can hook into your own.
 
 # API Docs
 
@@ -390,7 +394,7 @@ Returns **Web3**
 
 ### generateHash
 
-Generates hash from arguments passed
+Generates hash from arguments
 
 #### Parameters
 
