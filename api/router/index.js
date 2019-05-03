@@ -24,14 +24,14 @@ function _createRouter(middleware, routes) {
 /**
  * Creates a new joi-router using the ipfs decorateCtx middleware and routes
  * @func module:mantle/api/router.ipfs#createRouter
- * @param {String|Object} ipfsApiOptions Passed to {@link module:mantle/api/router/routes/ipfs#decorateCtx}
+ * @param {String|Object} ipfsClientOptions Passed to {@link module:mantle/api/router/routes/ipfs#decorateCtx}
  * @return {Object} joi-router instance
  * @see module:mantle/api/router~_createRouter
  * @see module:mantle/api/router/routes/ipfs#decorateCtx
  * @see module:mantle/api/router/routes/ipfs#routes
  */
-const createIpfsRouter = ipfsApiOptions =>
-  _createRouter(ipfs.decorateCtx(ipfsApiOptions), ipfs.routes)
+const createIpfsRouter = ipfsClientOptions =>
+  _createRouter(ipfs.decorateCtx(ipfsClientOptions), ipfs.routes)
 
 /**
  * Creates a new joi-router using the parityProxy decorateCtx middleware and routes

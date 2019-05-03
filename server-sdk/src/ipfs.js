@@ -1,18 +1,18 @@
-const ipfsAPI = require('ipfs-api')
+const ipfsClient = require('ipfs-http-client')
 
 function IPFS(host) {
   if (!host) {
     throw new Error('Please provide a host')
   }
 
-  const ipfs = ipfsAPI(host)
+  const ipfs = ipfsClient(host)
 
   /**
    * @param  {string} hash
    * @return {buffer}
    */
   async function cat(hash) {
-    const retrieved = await ipfs.files.cat(hash)
+    const retrieved = await ipfs.cat(hash)
     return retrieved
   }
   
