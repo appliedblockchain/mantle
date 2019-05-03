@@ -12,7 +12,7 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
-  "author": "",
+  "author": "appliedblockchain",
   "license": "GPL-3.0-or-later",
   "eslintConfig": {
     "extends": "@appliedblockchain/eslint-config"
@@ -29,6 +29,11 @@
     "supertest": "^3.3.0",
     "web3": "1.0.0-beta.33"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appliedblockchain/mantle.git"
+  },
+  "homepage": "https://github.com/appliedblockchain/mantle/tree/master/api#readme",
   "devDependencies": {
     "@appliedblockchain/eslint-config": "^2.3.0",
     "eslint": "^5.4.0",

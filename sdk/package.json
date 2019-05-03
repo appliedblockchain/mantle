@@ -1,7 +1,6 @@
 {
   "name": "@appliedblockchain/mantle",
-  "private": true,
-  "version": "1.12.0",
+  "version": "1.14.0",
   "description": "Mantle is a blockchain SDK targeting Ethereum and Hyperledger Fabric",
   "main": "src/mantle.js",
   "scripts": {
@@ -23,12 +22,12 @@
   "bugs": {
     "url": "https://github.com/appliedblockchain/mantle/issues"
   },
-  "homepage": "https://github.com/appliedblockchain/mantle#readme",
+  "homepage": "https://github.com/appliedblockchain/mantle/tree/master/sdk#readme",
   "eslintConfig": {
     "extends": "@appliedblockchain/eslint-config"
   },
   "dependencies": {
-    "@appliedblockchain/b-privacy-client": "^1.2.0",
+    "@appliedblockchain/b-privacy": "^1.3.0",
     "abi-decoder": "^1.2.0",
     "axios": "^0.18.0",
     "web3": "1.0.0-beta.33"

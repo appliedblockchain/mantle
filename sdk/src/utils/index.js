@@ -1,4 +1,4 @@
-const BPrivacy = require('@appliedblockchain/b-privacy-client')
+const BPrivacy = require('@appliedblockchain/b-privacy')
 const {
   bufferToHex,
   bufferToHex0x,

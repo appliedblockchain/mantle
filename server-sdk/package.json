@@ -1,7 +1,6 @@
 {
   "name": "@appliedblockchain/mantle-server",
-  "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "src/mantle.js",
   "scripts": {
@@ -10,7 +9,12 @@
     "build": "./build.sh"
   },
   "author": "appliedblockchain",
-  "license": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appliedblockchain/mantle.git"
+  },
+  "homepage": "https://github.com/appliedblockchain/mantle/tree/master/server-sdk#readme",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "ipfs-api": "^25.0.0"
   },
