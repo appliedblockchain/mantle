@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "javascript-obfuscator": "^0.18.1",
-    "jest": "^23.6.0",
+    "jest": "^24.7.1",
     "rimraf": "^2.6.2",
     "uglify-es": "^3.3.9"
   }
