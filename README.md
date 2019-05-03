@@ -33,10 +33,7 @@ README: https://github.com/appliedblockchain/mantle/blob/master/api/README.md
 - IPFS
 - Parity
 
-# NPM Pre-publish (uglify the release version) 
-
-We publish an uglified version of our source code to npm when using Mantle in client solutions (although an un-uglified version of the *sdk* code is available under the package name `@appliedblockchain/mantle`, whereas the client version is `@appliedblockchain/mantle-core`. Both the *sdk* and
-*server-sdk* repository contain build scripts that can be used to produce a *dist* folder with uglified code.
+# NPM Publishing
 
 To run:
 
