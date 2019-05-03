@@ -86,3 +86,20 @@ jobs:
       - run:
           name: run server-sdk tests
           command: cd ~/mantle/server-sdk && npm test
+
+  update_docs:
+    branches:
+      only: circleci-doc-upload
+    docker:
+    - image: appliedblockchain/aws-cli
+      auth:
+        username: $DOCKER_USER
+        password: $DOCKER_PASSWORD
+
+    working_directory: ~/mantle
+
+    steps:
+      - checkout
+      - run:
+          name: s3 upload
+          command: aws s3 cp ~/mantle/sdk/docs s3://mantle-docs.appliedblockchain.com --recursive
