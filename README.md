@@ -1,6 +1,8 @@
 # Mantle
 
-Mantle is a privacy solution for blockchain platforms like Ethereum. Usually data in private blockchains like Ethereum Poa/Instambul is stored in plain. With Mantle you can store sensible data encrypted and choose a selected number of parites to share this data with. The privacy solution that Mantle gives you sits outside the blockchain meaning is compatible with blockchains other than Ethereum (like for example Hyperledger Fabric or Corda).
+Mantle is a privacy solution for blockchain platforms like Ethereum. Usually data in private blockchains like Ethereum Poa/Instambul is stored in plain. With Mantle you can store sensible data encrypted and choose a selected number of parites to share this data with. The privacy solution that Mantle gives you sits outside the blockchain meaning that is compatible with blockchains other than Ethereum (like for example Hyperledger Fabric or Corda). 
+
+Mantle uses an hybrid cryptosystem to achieve so, please look at the SDK repository and documentation for more info.
 
 # Components
 
