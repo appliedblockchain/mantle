@@ -11,7 +11,8 @@
     "circleci-integration": "NODE_ENV=circleci jest --testRegex ./integration-test/.*.js$",
     "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo",
     "build": "./build.sh",
-    "build-token": "solc --combined-json abi,bin --allow-paths . contracts/*.sol > src/contracts/contracts.json"
+    "build-token": "solc --combined-json abi,bin --allow-paths . contracts/*.sol > src/contracts/contracts.json",
+    "build-docs": "npx documentation readme src/mantle.js  --section=Api *.js"
   },
   "repository": {
     "type": "git",
