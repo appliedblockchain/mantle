@@ -85,7 +85,3 @@ To run:
 Esdoc generation is available for the sdk:
 
 > `cd path/to/sdk && npm i && ./node_modules/.bin/esdoc`
-
-# Technical Specification
-
-Please check the documentation created in this repo: https://github.com/appliedblockchain/mantle-intro-doc
