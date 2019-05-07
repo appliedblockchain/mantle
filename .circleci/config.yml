@@ -1,5 +1,4 @@
-# TODO: Utilise workflows for parallel builds
-version: 2
+version: 2.1
 jobs:
   build:
     docker:
@@ -88,10 +87,8 @@ jobs:
           command: cd ~/mantle/server-sdk && npm test
 
   update_docs:
-    branches:
-      only: circleci-doc-upload
     docker:
-    - image: node
+    - image: node:11.8
       auth:
         username: $DOCKER_USER
         password: $DOCKER_PASSWORD
@@ -113,7 +110,23 @@ jobs:
           && apt-get clean
       - run:
           name: build docs
-          command: cd ~/mantle/sdk && npm run build-esdocs
+          command: cd ~/mantle/sdk && npm i && npm run build-esdocs
       - run:
           name: s3 upload
           command: aws s3 cp ~/mantle/sdk/docs s3://mantle-docs.appliedblockchain.com --recursive
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: /.*/
+          name: build_suite
+      - update_docs:
+          filters:
+            branches:
+              only: master
+          requires:
+            - build_suite
