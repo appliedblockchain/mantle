@@ -1,5 +1,5 @@
 require('bitcore-lib')
-const BPrivacy = require('@appliedblockchain/b-privacy-client')
+const BPrivacy = require('@appliedblockchain/b-privacy')
 const crypto = require('crypto')
 const Web3 = require('web3')
 const Mnemonic = require('bitcore-mnemonic')
