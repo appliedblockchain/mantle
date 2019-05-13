@@ -5,8 +5,7 @@
   "main": "src/mantle.js",
   "scripts": {
     "test": "jest",
-    "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo",
-    "build": "./build.sh"
+    "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo"
   },
   "author": "appliedblockchain",
   "repository": {
@@ -19,9 +18,6 @@
     "ipfs-api": "^25.0.0"
   },
   "devDependencies": {
-    "javascript-obfuscator": "^0.18.1",
-    "jest": "^24.7.1",
-    "rimraf": "^2.6.2",
-    "uglify-es": "^3.3.9"
+    "jest": "^24.7.1"
   }
 }

@@ -9,7 +9,6 @@
     "circleci": "NODE_ENV=circleci jest --testRegex ./test/.*.js$",
     "circleci-integration": "NODE_ENV=circleci jest --testRegex ./integration-test/.*.js$",
     "parity": "docker run -p 8545:8545 appliedblockchain/parity-solo",
-    "build": "./build.sh",
     "build-token": "solc --combined-json abi,bin --allow-paths . contracts/*.sol > src/contracts/contracts.json",
     "build-docs": "npx documentation readme src/mantle.js  --section=Api *.js",
     "build-esdocs": "esdoc"
@@ -41,11 +40,8 @@
     "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^5.4.0",
     "ganache-core": "^2.2.1",
-    "javascript-obfuscator": "^0.18.1",
     "jest": "^23.5.0",
     "openzeppelin-solidity": "^2.0.0",
-    "secp256k1": "^3.5.2",
-    "rimraf": "^2.6.2",
-    "uglify-es": "^3.3.9"
+    "secp256k1": "^3.5.2"
   }
 }
